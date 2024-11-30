@@ -48,3 +48,53 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+Architecture Diagram 
+![WhatsApp Image 2024-11-30 at 6 35 48 PM](https://github.com/user-attachments/assets/af32a280-621a-4dd7-8824-8471ef5d0821)
+
+About Project
+
+Sri Lanka offers incredible safari experiences, but several challenges can affect the enjoyment and safety of these adventures. 
+
+Key issues include travelers' lack of wildlife knowledge, drivers exceeding speed limits and causing traffic jams, confusion about route coverage, and insufficient emergency communication due to poor cell phone coverage. 
+
+Our innovative solution leverages AI/ML, image processing, and location tracking to address these problems, enhancing educational experiences, providing offline emergency features, improving safety, and offering a more immersive exploration of Sri Lanka's natural wonders.
+
+Dependecies
+ "dependencies": {
+    "@expo/vector-icons": "^14.0.4",
+    "@react-navigation/bottom-tabs": "^7.0.14",
+    "@react-navigation/native": "^7.0.9",
+    "@react-navigation/stack": "^7.0.14",
+    "axios": "^1.7.8",
+    "expo": "^52.0.11",
+    "expo-camera": "~16.0.7",
+    "expo-font": "~13.0.1",
+    "expo-image-picker": "~16.0.3",
+    "expo-linking": "~7.0.3",
+    "expo-router": "~4.0.9",
+    "expo-splash-screen": "~0.29.13",
+    "expo-status-bar": "~2.0.0",
+    "expo-system-ui": "~4.0.4",
+    "expo-web-browser": "~14.0.1",
+    "react": "^18.3.1",
+    "react-dom": "18.3.1",
+    "react-native": "0.76.3",
+    "react-native-camera": "^4.2.1",
+    "react-native-gesture-handler": "~2.20.2",
+    "react-native-get-random-values": "~1.11.0",
+    "react-native-paper": "^5.12.5",
+    "react-native-reanimated": "~3.16.1",
+    "react-native-safe-area-context": "^4.12.0",
+    "react-native-screens": "~4.1.0",
+    "react-native-vector-icons": "^10.2.0",
+    "react-native-web": "~0.19.10",
+    "react-navigation": "^4.4.4",
+    "react-navigation-stack": "^2.10.4"
+  }
+
+
+
+
+
+
