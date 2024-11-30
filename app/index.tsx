@@ -1,13 +1,22 @@
-import React,{ View, Text } from 'react-native'
-import CameraScreen from '../app/screens/CameraScreen';
+import React from 'react';
+import { createStackNavigator } from '@react-navigation/stack';
+import CameraScreen from './screens/CameraScreen';
+import Result from './screens/Result';  // Import Result screen
 
+export type RootStackParamList = {
+  Camera: undefined;
+  Result: { data: { class: string; confidence: number } };
+};
 
+const Stack = createStackNavigator<RootStackParamList>();
 
-const index = () => {
+const Index = () => {
   return (
-    <CameraScreen/>
-    
-  )
-}
+    <Stack.Navigator initialRouteName="Camera">
+      <Stack.Screen name="Camera" component={CameraScreen} />
+      <Stack.Screen name="Result" component={Result} />
+    </Stack.Navigator>
+  );
+};
 
-export default index
+export default Index;
