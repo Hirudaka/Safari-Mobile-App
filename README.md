@@ -1,16 +1,20 @@
-# Welcome to your Expo app 👋
+# How to setup the repository 👋
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
 ## Get started
-
-1. Install dependencies
+1. Download the Project or clone it using
+   ```bash
+   git clone https://github.com/Hirudaka/Safari-Mobile-App
+   ```
+   
+2. Install dependencies
 
    ```bash
    npm install
    ```
 
-2. Start the app
+3. Start the app
 
    ```bash
     npx expo start
