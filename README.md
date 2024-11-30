@@ -29,29 +29,6 @@ In the output, you'll find options to open the app in a
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
 
 # Architecture Diagram 
 ![WhatsApp Image 2024-11-30 at 6 35 48 PM](https://github.com/user-attachments/assets/af32a280-621a-4dd7-8824-8471ef5d0821)
@@ -86,6 +63,7 @@ Join our community of developers creating universal apps.
     "react-dom": "18.3.1",
     "react-native": "0.76.3",
     "react-native-camera": "^4.2.1",
+    "react-native-maps": "^1.20.1",
     "react-native-gesture-handler": "~2.20.2",
     "react-native-get-random-values": "~1.11.0",
     "react-native-paper": "^5.12.5",
@@ -98,6 +76,21 @@ Join our community of developers creating universal apps.
     "react-navigation-stack": "^2.10.4"
   }
 ```
+
+
+## Learn more
+
+To learn more about developing your project with Expo, look at the following resources:
+
+- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
+- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+
+## Join the community
+
+Join our community of developers creating universal apps.
+
+- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
+- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
 
 
 
