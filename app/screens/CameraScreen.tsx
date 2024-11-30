@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Button, StyleSheet, Text, View, Alert } from "react-native";
+import { TouchableOpacity, StyleSheet, Text, View, Alert } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
-import axios from 'axios';
-import { StackNavigationProp } from '@react-navigation/stack';
+import axios from "axios";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 // Define the RootStackParamList with the 'Result' route
 type RootStackParamList = {
@@ -11,7 +11,7 @@ type RootStackParamList = {
 };
 
 // Define the type for CameraScreen's navigation prop
-type CameraScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Camera'>;
+type CameraScreenNavigationProp = StackNavigationProp<RootStackParamList, "Camera">;
 
 interface CameraScreenProps {
   navigation: CameraScreenNavigationProp;
@@ -44,69 +44,60 @@ export default function CameraScreen({ navigation }: CameraScreenProps) {
     return (
       <View style={styles.container}>
         <Text style={{ textAlign: "center" }}>We need your permission to access the camera</Text>
-        <Button onPress={requestPermission} title="Grant Permission" />
+        <TouchableOpacity onPress={requestPermission} style={styles.permissionButton}>
+          <Text style={styles.permissionButtonText}>Grant Permission</Text>
+        </TouchableOpacity>
       </View>
     );
   }
 
-  // Function to test the connection to the server
   const testConnection = async () => {
     try {
-      const response = await axios.get('http://192.168.8.167:8000/ping'); 
-      return true; 
+      await axios.get("http://192.168.8.167:8000/ping");
+      return true;
     } catch (error) {
-      console.error("Connection error:", error); 
-      Alert.alert('Error', 'Unable to connect to the server');
-      return false; // Connection failed
+      console.error("Connection error:", error);
+      Alert.alert("Error", "Unable to connect to the server");
+      return false;
     }
   };
 
-  // Function to capture photo and send it to the API
   const captureAndPredict = async () => {
-    const isConnected = await testConnection(); // Check if the server is reachable
-    if (!isConnected) {
-      return; // If connection fails, stop execution
-    }
+    const isConnected = await testConnection();
+    if (!isConnected) return;
 
     if (cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync();
-      console.log(photo); // Log the captured photo
 
       const formData = new FormData();
-      formData.append('file', {
+      formData.append("file", {
         uri: photo.uri,
-        type: 'image/png',
-        name: 'photo.png',
+        type: "image/png",
+        name: "photo.png",
       });
 
       try {
-        const response = await axios.post('http://192.168.8.167:8000/predict', formData, { // Use your machine's IP address
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-
-        console.log(response.data); 
-        navigation.navigate('Result', { data: response.data });
+        const response = await axios.post(
+          "http://192.168.8.167:8000/predict",
+          formData,
+          { headers: { "Content-Type": "multipart/form-data" } }
+        );
+        navigation.navigate("Result", { data: response.data });
       } catch (error) {
         console.error(error);
-        Alert.alert('Error', 'There was an error processing the image');
+        Alert.alert("Error", "There was an error processing the image");
       }
     }
   };
 
   return (
     <View style={styles.container}>
-      <View style={{ flex: 1 }}>
-        <CameraView style={styles.camera} ref={cameraRef} pictureSize={pictureSize}>
-          <View style={styles.overlay}>
-            <Text style={styles.overlayText}>In To The Jungle</Text>
-          </View>
-        </CameraView>
-      </View>
-
-      <View style={styles.captureButtonContainer}>
-        <Button title="Capture Photo" onPress={captureAndPredict} />
+      <View style={styles.topPadding} />
+      <CameraView style={styles.camera} ref={cameraRef} pictureSize={pictureSize}>
+        
+      </CameraView>
+      <View style={styles.bottomPadding}>
+        <TouchableOpacity onPress={captureAndPredict} style={styles.shutterButton} />
       </View>
     </View>
   );
@@ -115,12 +106,20 @@ export default function CameraScreen({ navigation }: CameraScreenProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
     backgroundColor: "#000",
+  },
+  topPadding: {
+    height: 50,
+    backgroundColor: "#000",
+  },
+  bottomPadding: {
+    height: 120,
+    backgroundColor: "#000",
+    justifyContent: "center",
+    alignItems: "center",
   },
   camera: {
     flex: 1,
-    justifyContent: "flex-end",
   },
   overlay: {
     position: "absolute",
@@ -136,10 +135,21 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 10,
   },
-  captureButtonContainer: {
-    padding: 20,
-    backgroundColor: "transparent",
-    justifyContent: "center",
-    alignItems: "center",
+  shutterButton: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: "#fff",
+    borderWidth: 4,
+    borderColor: "#000",
+  },
+  permissionButton: {
+    backgroundColor: "#007BFF",
+    padding: 10,
+    borderRadius: 5,
+  },
+  permissionButtonText: {
+    color: "#fff",
+    fontSize: 16,
   },
 });
