@@ -49,10 +49,10 @@ Join our community of developers creating universal apps.
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
 
-Architecture Diagram 
+# Architecture Diagram 
 ![WhatsApp Image 2024-11-30 at 6 35 48 PM](https://github.com/user-attachments/assets/af32a280-621a-4dd7-8824-8471ef5d0821)
 
-About Project
+## About Project
 
 Sri Lanka offers incredible safari experiences, but several challenges can affect the enjoyment and safety of these adventures. 
 
@@ -60,7 +60,7 @@ Key issues include travelers' lack of wildlife knowledge, drivers exceeding spee
 
 Our innovative solution leverages AI/ML, image processing, and location tracking to address these problems, enhancing educational experiences, providing offline emergency features, improving safety, and offering a more immersive exploration of Sri Lanka's natural wonders.
 
-Dependecies
+### Dependecies
  "dependencies": {
     "@expo/vector-icons": "^14.0.4",
     "@react-navigation/bottom-tabs": "^7.0.14",
