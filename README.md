@@ -54,13 +54,14 @@ Join our community of developers creating universal apps.
 
 ## About Project
 
-Sri Lanka offers incredible safari experiences, but several challenges can affect the enjoyment and safety of these adventures. 
+- Sri Lanka offers incredible safari experiences, but several challenges can affect the enjoyment and safety of these adventures. 
 
-Key issues include travelers' lack of wildlife knowledge, drivers exceeding speed limits and causing traffic jams, confusion about route coverage, and insufficient emergency communication due to poor cell phone coverage. 
+- Key issues include travelers' lack of wildlife knowledge, drivers exceeding speed limits and causing traffic jams, confusion about route coverage, and insufficient emergency communication due to poor cell phone coverage. 
 
-Our innovative solution leverages AI/ML, image processing, and location tracking to address these problems, enhancing educational experiences, providing offline emergency features, improving safety, and offering a more immersive exploration of Sri Lanka's natural wonders.
+- Our innovative solution leverages AI/ML, image processing, and location tracking to address these problems, enhancing educational experiences, providing offline emergency features, improving safety, and offering a more immersive exploration of Sri Lanka's natural wonders.
 
 ### Dependecies
+```bash
  "dependencies": {
     "@expo/vector-icons": "^14.0.4",
     "@react-navigation/bottom-tabs": "^7.0.14",
@@ -92,6 +93,7 @@ Our innovative solution leverages AI/ML, image processing, and location tracking
     "react-navigation": "^4.4.4",
     "react-navigation-stack": "^2.10.4"
   }
+```
 
 
 
