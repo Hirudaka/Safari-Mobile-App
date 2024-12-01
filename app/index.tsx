@@ -1,10 +1,8 @@
 import { View, Text } from 'react-native'
-
+import MapScreen from './screens/MapScreen'; 
 const index = () => {
   return (
-    <View>
-      <Text>index</Text>
-    </View>
+    <MapScreen/>
   )
 }
 
