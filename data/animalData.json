@@ -1,37 +1,40 @@
 {
-    "animals": [
-      {
-        "name": "Sri Lankan Leopard",
-        "scientificName": "Panthera pardus kotiya",
-        "size": "Males: 56–77 kg; Females: 29–34 kg",
-        "age": "12–15 years in the wild",
-        "description": "The Sri Lankan leopard, an apex predator and endemic subspecies, is recognized for its golden-yellow coat adorned with black rosettes and spots. Solitary and territorial, it is active both day and night, hunting a variety of prey such as deer, wild boar, and monkeys. It thrives in dry forests, grasslands, and scrublands, particularly in Yala National Park, which has one of the world’s highest leopard densities. Known for its elusive nature, it is a symbol of Sri Lanka's rich biodiversity.",
-        "class": "Leopard"
-      },
-      {
-        "name": "Sri Lankan Sambar Deer",
-        "scientificName": "Rusa unicolor unicolor",
-        "size": "Males: up to 270 kg; Females: slightly smaller",
-        "age": "12–20 years in the wild",
-        "description": "The Sri Lankan sambar deer is the largest deer species in Sri Lanka, characterized by its coarse brown coat and large branched antlers in males. Shy and crepuscular, it feeds on grasses, leaves, and fruits and is a vital prey species for leopards. Preferring open woodlands and grasslands near water, it is known for its excellent swimming skills, often used to evade predators.",
-        "class": "Deer"
-      },
-      {
-        "name": "Indian Peacock",
-        "scientificName": "Pavo cristatus",
-        "size": "Males: up to 2.3 meters including tail; Females: smaller",
-        "age": "10–25 years",
-        "description": "The Indian peafowl is distinguished by the male’s vibrant blue-green plumage and long, iridescent tail feathers, while females are less colorful with a brownish-green appearance. Omnivorous, it feeds on seeds, fruits, insects, and small reptiles. Often found in scrublands and forest clearings, males perform elaborate courtship displays by fanning their tails. Sacred in Sri Lanka, peafowls hold cultural significance in Hindu and Buddhist traditions.",
-        "class": "Peacock"
-      },
-      {
-        "name": "Asian Elephant",
-        "scientificName": "Elephas maximus maximus",
-        "size": "Up to 5,500 kg",
-        "age": "50–70 years",
-        "description": "The Sri Lankan elephant, the largest Asian elephant subspecies, has grey skin often marked with pink patches on its ears and face. Known for their intelligence and strong social bonds, they live in matriarchal herds, while males are often solitary. They feed on grasses, leaves, fruits, and bark, requiring vast amounts of food and water daily. Found in forests, grasslands, and near water, these elephants play a crucial role in seed dispersal and ecosystem balance.",
-        "class": "Elephants"
-      }
-    ]
-  }
-  
+  "animals": [
+    {
+      "name": "Sri Lankan Leopard",
+      "scientificName": "Panthera pardus kotiya",
+      "size": "Males: 56–77 kg; Females: 29–34 kg",
+      "age": "12–15 years in the wild",
+      "description": "The Sri Lankan leopard, an apex predator and endemic subspecies, is recognized for its golden-yellow coat adorned with black rosettes and spots. Solitary and territorial, it is active both day and night, hunting a variety of prey such as deer, wild boar, and monkeys. It thrives in dry forests, grasslands, and scrublands, particularly in Yala National Park, which has one of the world’s highest leopard densities. Known for its elusive nature, it is a symbol of Sri Lanka's rich biodiversity.",
+      "class": "Leopard",
+      "imageUrl": "sri-lanka-leopard-asian.jpg"
+    },
+    {
+      "name": "Sri Lankan Sambar Deer",
+      "scientificName": "Rusa unicolor unicolor",
+      "size": "Males: up to 270 kg; Females: slightly smaller",
+      "age": "12–20 years in the wild",
+      "description": "The Sri Lankan sambar deer is the largest deer species in Sri Lanka, characterized by its coarse brown coat and large branched antlers in males. Shy and crepuscular, it feeds on grasses, leaves, and fruits and is a vital prey species for leopards. Preferring open woodlands and grasslands near water, it is known for its excellent swimming skills, often used to evade predators.",
+      "class": "Deer",
+      "imageUrl": "deer.avif"
+    },
+    {
+      "name": "Indian Peacock",
+      "scientificName": "Pavo cristatus",
+      "size": "Males: up to 2.3 meters including tail; Females: smaller",
+      "age": "10–25 years",
+      "description": "The Indian peafowl is distinguished by the male’s vibrant blue-green plumage and long, iridescent tail feathers, while females are less colorful with a brownish-green appearance. Omnivorous, it feeds on seeds, fruits, insects, and small reptiles. Often found in scrublands and forest clearings, males perform elaborate courtship displays by fanning their tails. Sacred in Sri Lanka, peafowls hold cultural significance in Hindu and Buddhist traditions.",
+      "class": "Peacock",
+      "imageUrl": "peacock.jpg"
+    },
+    {
+      "name": "Asian Elephant",
+      "scientificName": "Elephas maximus maximus",
+      "size": "Up to 5,500 kg",
+      "age": "50–70 years",
+      "description": "The Sri Lankan elephant, the largest Asian elephant subspecies, has grey skin often marked with pink patches on its ears and face. Known for their intelligence and strong social bonds, they live in matriarchal herds, while males are often solitary. They feed on grasses, leaves, fruits, and bark, requiring vast amounts of food and water daily. Found in forests, grasslands, and near water, these elephants play a crucial role in seed dispersal and ecosystem balance.",
+      "class": "Elephants",
+      "imageUrl": "elephants.jpg"
+    }
+  ]
+}

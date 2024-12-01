@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../index';
+import imageMapping from '../../assets/imageMapping';
 
 const animalData = require('../../data/animalData.json');
 
@@ -31,7 +32,7 @@ const Result = ({ route }: ResultProps) => {
         <View style={styles.animalInfo}>
           <Text style={styles.sectionTitle}>Details</Text>
           <Image
-            source={{ uri: animal.imageUrl }}
+            source={imageMapping[animal.imageUrl]} // Access image from mapping
             style={styles.image}
             resizeMode="contain"
           />
@@ -51,7 +52,6 @@ const Result = ({ route }: ResultProps) => {
             <Text style={styles.bold}>Age: </Text>
             {animal.age}
           </Text>
-
           <Text style={styles.sectionTitle}>Description</Text>
           <Text style={styles.description}>{animal.description}</Text>
         </View>
