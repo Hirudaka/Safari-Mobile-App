@@ -10,13 +10,14 @@
       "imageUrl": "sri-lanka-leopard-asian.jpg"
     },
     {
-      "name": "Sri Lankan Sambar Deer",
-      "scientificName": "Rusa unicolor unicolor",
-      "size": "Males: up to 270 kg; Females: slightly smaller",
-      "age": "12–20 years in the wild",
-      "description": "The Sri Lankan sambar deer is the largest deer species in Sri Lanka, characterized by its coarse brown coat and large branched antlers in males. Shy and crepuscular, it feeds on grasses, leaves, and fruits and is a vital prey species for leopards. Preferring open woodlands and grasslands near water, it is known for its excellent swimming skills, often used to evade predators.",
-      "class": "Deer",
-      "imageUrl": "deer.avif"
+      
+        "name": "Spotted Deer",
+        "scientificName": "Axis axis",
+        "size": "Males: up to 85 kg; Females: slightly smaller",
+        "age": "8–14 years in the wild",
+        "description": "The spotted deer, also known as chital, is one of the most graceful and common deer species in Sri Lanka, especially in Yala National Park. Recognized by its reddish-brown coat adorned with white spots, it exhibits a striking contrast. These herbivores are highly social, often seen grazing in groups in open grasslands and forest edges. Feeding on grasses, leaves, and fruits, they play an essential role in the ecosystem. Known for their alert and swift nature, spotted deer are a primary prey for leopards in the region.",
+        "class": "Deer",
+        "imageUrl": "deer.jpg"
     },
     {
       "name": "Indian Peacock",
@@ -33,7 +34,7 @@
       "size": "Up to 5,500 kg",
       "age": "50–70 years",
       "description": "The Sri Lankan elephant, the largest Asian elephant subspecies, has grey skin often marked with pink patches on its ears and face. Known for their intelligence and strong social bonds, they live in matriarchal herds, while males are often solitary. They feed on grasses, leaves, fruits, and bark, requiring vast amounts of food and water daily. Found in forests, grasslands, and near water, these elephants play a crucial role in seed dispersal and ecosystem balance.",
-      "class": "Elephants",
+      "class": "Elephant",
       "imageUrl": "elephants.jpg"
     }
   ]

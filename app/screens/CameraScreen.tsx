@@ -7,7 +7,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 // Define the RootStackParamList with the 'Result' route
 type RootStackParamList = {
   Camera: undefined;
-  Result: { data: { class: string; confidence: number } }; // Define the parameters for the 'Result' route
+  Result: { data: { class_name: string; confidence: number } }; // Updated response structure
 };
 
 // Define the type for CameraScreen's navigation prop
@@ -53,7 +53,7 @@ export default function CameraScreen({ navigation }: CameraScreenProps) {
 
   const testConnection = async () => {
     try {
-      await axios.get("http://192.168.8.167:8000/ping");
+      await axios.get("http://192.168.1.6:8000/ping");
       return true;
     } catch (error) {
       console.error("Connection error:", error);
@@ -78,11 +78,11 @@ export default function CameraScreen({ navigation }: CameraScreenProps) {
 
       try {
         const response = await axios.post(
-          "http://192.168.8.167:8000/predict",
+          "http://192.168.1.6:8000/predict",
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
-        navigation.navigate("Result", { data: response.data });
+        navigation.navigate("Result", { data: response.data }); // Updated structure
       } catch (error) {
         console.error(error);
         Alert.alert("Error", "There was an error processing the image");
@@ -93,9 +93,7 @@ export default function CameraScreen({ navigation }: CameraScreenProps) {
   return (
     <View style={styles.container}>
       <View style={styles.topPadding} />
-      <CameraView style={styles.camera} ref={cameraRef} pictureSize={pictureSize}>
-        
-      </CameraView>
+      <CameraView style={styles.camera} ref={cameraRef} pictureSize={pictureSize}></CameraView>
       <View style={styles.bottomPadding}>
         <TouchableOpacity onPress={captureAndPredict} style={styles.shutterButton} />
       </View>
