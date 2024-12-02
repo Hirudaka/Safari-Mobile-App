@@ -43,15 +43,18 @@ interface CustomMarkerProps {
 const MapScreen = () => {
     const yalaRegionCoordinates = [
         { latitude: 6.5150, longitude: 81.3850 },  
-        { latitude: 6.3750, longitude: 81.3900 },  
+        { latitude: 6.3258, longitude: 81.3832 },
+        { latitude: 6.3232,longitude: 81.4801 },
+        { latitude:6.3420, longitude:81.4950  },
+        { latitude:6.3664, longitude:81.5225  },
         { latitude: 6.3700, longitude: 81.5600 },  
-        { latitude: 6.5100, longitude: 81.5550 },  
+        { latitude: 6.5100, longitude: 81.5600 },  
         { latitude: 6.5150, longitude: 81.3850 }   
     ];
-
+     
     const [mapRegion, setMapRegion] = useState<Region>({
-        latitude: 6.4450,
-        longitude: 81.4725,
+        latitude: 6.4163, 
+        longitude: 81.4612,
         latitudeDelta: 0.1,
         longitudeDelta: 0.1,
     });
