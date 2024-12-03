@@ -20,7 +20,7 @@ const Result = ({ route }: ResultProps) => {
 
   // Match the animal based on the 'class_name' field
   const animal = animalData.animals.find(
-    (a: any) => a.class=== animalClass
+    (a: any) => a.class === animalClass
   );
 
   // Handle missing animal data gracefully
@@ -82,10 +82,10 @@ const Result = ({ route }: ResultProps) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#e8f5e9",
   },
   header: {
-    backgroundColor: "#4682B4",
+    backgroundColor: "#2e7d32",
     paddingVertical: 20,
     paddingHorizontal: 15,
     alignItems: "center",
@@ -96,12 +96,12 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#fff",
+    color: "#ffffff",
     marginBottom: 5,
   },
   confidenceText: {
     fontSize: 16,
-    color: "#dfefff",
+    color: "#d0f2d0",
   },
   content: {
     padding: 15,
@@ -112,10 +112,10 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#c8e6c9",
   },
   infoCard: {
-    backgroundColor: "#fff",
+    backgroundColor: "#ffffff",
     padding: 15,
     borderRadius: 10,
     marginBottom: 20,
@@ -129,18 +129,18 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 10,
-    color: "#333",
+    color: "#2e7d32",
   },
   infoText: {
     fontSize: 16,
-    color: "#555",
+    color: "#4e4e4e",
     marginBottom: 5,
   },
   bold: {
     fontWeight: "bold",
   },
   descriptionCard: {
-    backgroundColor: "#fff",
+    backgroundColor: "#ffffff",
     padding: 15,
     borderRadius: 10,
     elevation: 3,
@@ -151,20 +151,20 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 16,
-    color: "#555",
+    color: "#4e4e4e",
     lineHeight: 22,
   },
   noData: {
     padding: 20,
     margin: 10,
-    backgroundColor: "#fff",
+    backgroundColor: "#ffffff",
     borderRadius: 8,
     elevation: 3,
     alignItems: "center",
   },
   noDataText: {
     fontSize: 18,
-    color: "#888",
+    color: "#7b7b7b",
   },
 });
 
