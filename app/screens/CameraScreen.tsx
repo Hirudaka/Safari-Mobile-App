@@ -53,7 +53,7 @@ export default function CameraScreen({ navigation }: CameraScreenProps) {
 
   const testConnection = async () => {
     try {
-      await axios.get("http://192.168.1.6:8000/ping");
+      await axios.get("http://192.168.8.167:8000/ping");
       return true;
     } catch (error) {
       console.error("Connection error:", error);
@@ -65,30 +65,33 @@ export default function CameraScreen({ navigation }: CameraScreenProps) {
   const captureAndPredict = async () => {
     const isConnected = await testConnection();
     if (!isConnected) return;
-
+  
     if (cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync();
-
+  
       const formData = new FormData();
       formData.append("file", {
         uri: photo.uri,
         type: "image/png",
         name: "photo.png",
       });
-
+  
       try {
         const response = await axios.post(
-          "http://192.168.1.6:8000/predict",
+          "http://192.168.8.167:8000/get_animal_height",  // New API endpoint
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
-        navigation.navigate("Result", { data: response.data }); // Updated structure
+  
+        // Navigate to Result page with updated response data
+        navigation.navigate("Result", { data: response.data });
       } catch (error) {
         console.error(error);
         Alert.alert("Error", "There was an error processing the image");
       }
     }
   };
+  
 
   return (
     <View style={styles.container}>
