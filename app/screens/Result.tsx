@@ -49,18 +49,19 @@ const Result = ({ route }) => {
     }
   }, [class_name, height_pixels]);
 
-  // Navigate to the map with user location and distance
-  const handleNavigateToMap = () => {
-    if (userLocation && distance) {
-      navigation.navigate("MapScreen", {
-        userLatitude: userLocation.coords.latitude,
-        userLongitude: userLocation.coords.longitude,
-        estimatedDistance: distance,
-      });
-    } else {
-      console.warn("User location or distance not available");
-    }
-  };
+// Navigate to the map with user location, distance, and class_name
+const handleNavigateToMap = () => {
+  if (userLocation && distance) {
+    navigation.navigate("MapScreen", {
+      userLatitude: userLocation.coords.latitude,
+      userLongitude: userLocation.coords.longitude,
+      estimatedDistance: distance,
+      class_name, 
+    });
+  } else {
+    console.warn("User location or distance not available");
+  }
+};
 
   if (!class_name) {
     return (
