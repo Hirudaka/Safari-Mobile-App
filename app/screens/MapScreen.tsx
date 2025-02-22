@@ -1,35 +1,62 @@
-import React, { useState } from "react";
-import { View, StyleSheet, Text, Button, Alert } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, StyleSheet, Text, Alert, Button } from "react-native";
 import MapView, { Marker } from "react-native-maps";
+import { Picker } from "@react-native-picker/picker";
+import { Magnetometer } from "expo-sensors"; // To access device orientation
 
 const MapScreen = ({ route }) => {
   const { userLatitude, userLongitude, estimatedDistance, class_name } = route.params;
 
-  // Calculate estimated animal location
-  const estimatedAnimalLocation = {
-    latitude: userLatitude + (estimatedDistance / 111320), // Approximate conversion of meters to degrees latitude
-    longitude: userLongitude + (estimatedDistance / (111320 * Math.cos(userLatitude * (Math.PI / 180)))), // Adjust longitude based on heading
-  };
+  // State for selected animal and modal visibility
+  const [selectedAnimal, setSelectedAnimal] = useState(class_name || "Peacock");
+  const [isSaving, setIsSaving] = useState(false);
+  const [bearing, setBearing] = useState(0); // State for storing device's bearing (direction)
+  const [estimatedAnimalLocation, setEstimatedAnimalLocation] = useState(null); // Store the location once calculated
+  const [userPinnedLocation, setUserPinnedLocation] = useState(null); // Store new user-pinned location
+
+  // Get device orientation (bearing) using Magnetometer
+  useEffect(() => {
+    const subscription = Magnetometer.addListener((sensorData) => {
+      const angle = Math.atan2(sensorData.y, sensorData.x) * (180 / Math.PI); // Calculate the angle
+      setBearing(angle); // Set the bearing (orientation)
+    });
+
+    return () => {
+      subscription.remove(); // Cleanup subscription on unmount
+    };
+  }, []);
+
+  // Function to calculate estimated animal location based on user position and bearing
+  useEffect(() => {
+    if (bearing !== 0 && estimatedAnimalLocation === null) {
+      const bearingRad = (bearing * Math.PI) / 180; // Convert bearing to radians
+      const newLatitude =
+        userLatitude + (estimatedDistance / 111320) * Math.cos(bearingRad); // Adjust latitude based on bearing
+      const newLongitude =
+        userLongitude +
+        (estimatedDistance / (111320 * Math.cos(userLatitude * (Math.PI / 180)))) *
+          Math.sin(bearingRad); // Adjust longitude based on bearing
+
+      setEstimatedAnimalLocation({ latitude: newLatitude, longitude: newLongitude });
+    }
+  }, [bearing, userLatitude, userLongitude, estimatedDistance, estimatedAnimalLocation]);
 
   // Generate timestamp
   const timestamp = new Date().toISOString();
 
-  // State to handle loading status
-  const [isSaving, setIsSaving] = useState(false);
-
   // Function to send data to the backend
   const saveAnimalData = async () => {
-    setIsSaving(true); // Show loading state
+    setIsSaving(true);
 
     try {
-      const response = await fetch("http://192.168.48.219:8000/save_animal_data", {
+      const response = await fetch("http://192.168.211.219:8000/save_animal_data", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          estimatedAnimalLocation,
-          class_name,
+          estimatedAnimalLocation: userPinnedLocation || estimatedAnimalLocation,
+          class_name: selectedAnimal,
           timestamp,
         }),
       });
@@ -43,9 +70,17 @@ const MapScreen = ({ route }) => {
       Alert.alert("Error", "An error occurred while saving the data.");
       console.error("Error:", error);
     } finally {
-      setIsSaving(false); // Stop loading state
+      setIsSaving(false);
     }
   };
+
+  if (!estimatedAnimalLocation) {
+    return (
+      <View style={styles.container}>
+        <Text>Loading location...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -54,40 +89,56 @@ const MapScreen = ({ route }) => {
         initialRegion={{
           latitude: userLatitude,
           longitude: userLongitude,
-          latitudeDelta: 0.05, // Increased zoom level for wider view
-          longitudeDelta: 0.05, // Increased zoom level for wider view
+          latitudeDelta: 0.05,
+          longitudeDelta: 0.05,
         }}
         showsUserLocation={true}
         followsUserLocation={true}
+        onPress={(e) => setUserPinnedLocation(e.nativeEvent.coordinate)} // Allow user to pin a new location
       >
-        {/* User Location Marker */}
-        <Marker
-          coordinate={{ latitude: userLatitude, longitude: userLongitude }}
-          title="Your Location"
-          description="This is your current location"
-        />
-
-        {/* Estimated Animal Location Marker */}
+        {/* Show the calculated estimated location */}
         <Marker
           coordinate={estimatedAnimalLocation}
           title="Estimated Animal Location"
           description={`Estimated distance: ${estimatedDistance.toFixed(2)} meters`}
         />
+        {/* Show user-pinned location if any */}
+        {userPinnedLocation && (
+          <Marker
+            coordinate={userPinnedLocation}
+            title="Pinned Animal Location"
+            description="You can save this location."
+            pinColor="blue" // Change the color to distinguish it
+          />
+        )}
       </MapView>
 
-      {/* Display user latitude and longitude */}
-      <View style={styles.textContainer}>
-        <Text style={styles.text}>Lat: {userLatitude}</Text>
-        <Text style={styles.text}>Long: {userLongitude}</Text>
-      </View>
+      {/* Confirmation Box at Bottom */}
+      <View style={styles.bottomSheet}>
+        <Text style={styles.modalTitle}>Confirm Save</Text>
+        <Text style={styles.modalText}>Select the animal you spotted:</Text>
 
-      {/* Save Button */}
-      <View style={styles.buttonContainer}>
-        <Button
-          title={isSaving ? "Saving..." : "Save Animal Data"}
-          onPress={saveAnimalData}
-          disabled={isSaving} // Disable the button while saving
-        />
+        {/* Picker Dropdown */}
+        <Picker
+          selectedValue={selectedAnimal}
+          onValueChange={(itemValue) => setSelectedAnimal(itemValue)}
+          style={styles.picker}
+        >
+          <Picker.Item label="Peacock" value="Peacock" />
+          <Picker.Item label="Elephant" value="Elephant" />
+          <Picker.Item label="Deer" value="Deer" />
+          <Picker.Item label="Leopard" value="Leopard" />
+        </Picker>
+
+        {/* Buttons */}
+        <View style={styles.modalButtons}>
+          <Button
+            title="Cancel"
+            color="red"
+            onPress={() => Alert.alert("Cancelled", "Animal data was not saved.")}
+          />
+          <Button title="OK" onPress={saveAnimalData} disabled={isSaving} />
+        </View>
       </View>
     </View>
   );
@@ -96,25 +147,36 @@ const MapScreen = ({ route }) => {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   map: { ...StyleSheet.absoluteFillObject },
-  textContainer: {
+  bottomSheet: {
     position: "absolute",
-    top: 20,
-    left: 20,
-    zIndex: 1,
-    backgroundColor: "rgba(255, 255, 255, 0.7)",
-    padding: 10,
-    borderRadius: 5,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "white",
+    padding: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    alignItems: "center",
+    elevation: 10,
   },
-  text: {
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  modalText: {
     fontSize: 16,
-    color: "black",
+    marginBottom: 10,
   },
-  buttonContainer: {
-    position: "absolute",
-    bottom: 20, // Position the button at the bottom of the screen
-    left: 20,
-    right: 20,
-    zIndex: 1,
+  picker: {
+    width: "100%",
+    height: 50,
+  },
+  modalButtons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    marginTop: 10,
   },
 });
 
