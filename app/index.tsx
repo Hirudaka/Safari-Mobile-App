@@ -1,11 +1,57 @@
-import { View, Text } from 'react-native'
+import * as React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import HomePage from './screens/HomePage';
+import CameraScreen from './screens/CameraScreen';
+import Result from './screens/Result';
+import MapScreen from './screens/MapScreen';
+import MapFilters from './screens/MapFiltersScreen';
+import { RootStackParamList } from './types/navigation';
 
-const index = () => {
+const Stack = createStackNavigator<RootStackParamList>();
+
+const AppNavigator = () => {
   return (
-    <View>
-      <Text>index</Text>
-    </View>
-  )
-}
+    <Stack.Navigator 
+      initialRouteName="Home"
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: '#f4511e',
+        },
+        headerTintColor: '#fff',
+        headerTitleStyle: {
+          fontWeight: 'bold',
+        },
+      }}
+    >
+      <Stack.Screen 
+        name="Home" 
+        component={HomePage}
+        options={{ title: 'Home' }}
+      />
+      <Stack.Screen 
+        name="Camera" 
+        component={CameraScreen}
+        options={{ title: 'Camera' }}
+      />
+      <Stack.Screen 
+        name="Result" 
+        component={Result}
+        options={{ title: 'Results' }}
+      />
+      <Stack.Screen 
+        name="MapFilters" 
+        component={MapFilters}
+        options={{ title: 'Map Filters' }}
+      />
+      <Stack.Screen 
+        name="MapScreen" 
+        component={MapScreen}
+        options={{ title: 'Map' }}
+      />
+    </Stack.Navigator>
+  );
+};
 
-export default index
+export default AppNavigator;
+
