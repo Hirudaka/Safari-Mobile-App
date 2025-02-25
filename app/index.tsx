@@ -1,7 +1,7 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import CameraScreen from './screens/CameraScreen';
-import Result from './screens/Result';  // Import Result screen
+import Result from './screens/Result';  
 import MapScreen from './screens/MapScreen';
 export type RootStackParamList = {
   Camera: undefined;

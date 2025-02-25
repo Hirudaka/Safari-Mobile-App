@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Text, Alert, Button } from "react-native";
+import { View, StyleSheet, Text, Alert, Button, Animated } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { Picker } from "@react-native-picker/picker";
 import { Magnetometer } from "expo-sensors"; // To access device orientation
@@ -13,6 +13,14 @@ const MapScreen = ({ route }) => {
   const [bearing, setBearing] = useState(0); // State for storing device's bearing (direction)
   const [estimatedAnimalLocation, setEstimatedAnimalLocation] = useState(null); // Store the location once calculated
   const [userPinnedLocation, setUserPinnedLocation] = useState(null); // Store new user-pinned location
+  const [region, setRegion] = useState({
+    latitude: userLatitude,
+    longitude: userLongitude,
+    latitudeDelta: 0.05,
+    longitudeDelta: 0.05,
+  });
+
+  const [zoom] = useState(new Animated.Value(0));
 
   // Get device orientation (bearing) using Magnetometer
   useEffect(() => {
@@ -40,6 +48,15 @@ const MapScreen = ({ route }) => {
       setEstimatedAnimalLocation({ latitude: newLatitude, longitude: newLongitude });
     }
   }, [bearing, userLatitude, userLongitude, estimatedDistance, estimatedAnimalLocation]);
+
+  // Zoom into the user's location when the screen loads
+  useEffect(() => {
+    Animated.timing(zoom, {
+      toValue: 1,
+      duration: 1000,
+      useNativeDriver: true,
+    }).start();
+  }, [userLatitude, userLongitude]);
 
   // Generate timestamp
   const timestamp = new Date().toISOString();
@@ -86,15 +103,12 @@ const MapScreen = ({ route }) => {
     <View style={styles.container}>
       <MapView
         style={styles.map}
-        initialRegion={{
-          latitude: userLatitude,
-          longitude: userLongitude,
-          latitudeDelta: 0.05,
-          longitudeDelta: 0.05,
-        }}
+        region={region}
         showsUserLocation={true}
         followsUserLocation={true}
         onPress={(e) => setUserPinnedLocation(e.nativeEvent.coordinate)} // Allow user to pin a new location
+        zoomEnabled={true}
+        scrollEnabled={true}
       >
         {/* Show the calculated estimated location */}
         <Marker
@@ -152,21 +166,25 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: "white",
+    backgroundColor: "#fff",
     padding: 20,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     alignItems: "center",
     elevation: 10,
+    borderTopWidth: 1,
+    borderTopColor: "#eee",
   },
   modalTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "bold",
     marginBottom: 10,
+    color: "#333",
   },
   modalText: {
     fontSize: 16,
     marginBottom: 10,
+    color: "#666",
   },
   picker: {
     width: "100%",
