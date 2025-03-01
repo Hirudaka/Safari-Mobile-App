@@ -4,7 +4,7 @@ import MapView, { Marker } from "react-native-maps";
 import { Picker } from "@react-native-picker/picker";
 import { Magnetometer } from "expo-sensors"; // To access device orientation
 
-const MapScreen = ({ route }) => {
+const UserMapScreen = ({ route }) => {
   const { userLatitude, userLongitude, estimatedDistance, class_name } = route.params;
 
   // State for selected animal and modal visibility
@@ -66,7 +66,7 @@ const MapScreen = ({ route }) => {
     setIsSaving(true);
 
     try {
-      const response = await fetch("http://192.168.211.219:8000/save_animal_data", {
+      const response = await fetch("http://172.28.0.229:8000/save_animal_data", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -198,4 +198,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MapScreen;
+export default UserMapScreen;

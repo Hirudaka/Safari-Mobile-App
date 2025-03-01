@@ -2,7 +2,7 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import CameraScreen from './screens/CameraScreen';
 import Result from './screens/Result';  
-import MapScreen from './screens/MapScreen';
+import UserMapScreen from './screens/UserMapScreen';
 export type RootStackParamList = {
   Camera: undefined;
   Result: { data: { class: string; confidence: number } };
@@ -15,7 +15,7 @@ const Index = () => {
     <Stack.Navigator initialRouteName="Camera">
       <Stack.Screen name="Camera" component={CameraScreen} />
       <Stack.Screen name="Result" component={Result} />
-      <Stack.Screen name="MapScreen" component={MapScreen} />
+      <Stack.Screen name="UserMapScreen" component={UserMapScreen} />
     </Stack.Navigator>
   );
 };

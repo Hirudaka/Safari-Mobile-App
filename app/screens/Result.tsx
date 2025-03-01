@@ -44,7 +44,7 @@ const Result = ({ route }) => {
 
   const handleNavigateToMap = () => {
     if (userLocation && distance !== null) {
-      navigation.navigate("MapScreen", {
+      navigation.navigate("UserMapScreen", {
         userLatitude: userLocation.coords.latitude,
         userLongitude: userLocation.coords.longitude,
         estimatedDistance: distance,
