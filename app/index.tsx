@@ -6,6 +6,7 @@ import CameraScreen from './screens/CameraScreen';
 import Result from './screens/Result';
 import MapScreen from './screens/MapScreen';
 import MapFilters from './screens/MapFiltersScreen';
+import UserMapScreen from './screens/UserMapScreen';
 import { RootStackParamList } from './types/navigation';
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -16,7 +17,7 @@ const AppNavigator = () => {
       initialRouteName="Home"
       screenOptions={{
         headerStyle: {
-          backgroundColor: '#f4511e',
+          backgroundColor: '#5A8200',
         },
         headerTintColor: '#fff',
         headerTitleStyle: {
@@ -45,10 +46,16 @@ const AppNavigator = () => {
         options={{ title: 'Map Filters' }}
       />
       <Stack.Screen 
+        name="UserMapScreen" 
+        component={UserMapScreen}
+        options={{ title: 'User Map' }}
+      />
+      <Stack.Screen 
         name="MapScreen" 
         component={MapScreen}
         options={{ title: 'Map' }}
       />
+      
     </Stack.Navigator>
   );
 };

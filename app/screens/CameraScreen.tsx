@@ -1,12 +1,17 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { TouchableOpacity, StyleSheet, Text, View, Alert } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import axios from "axios";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from '../types/navigation';
-import * as React from "react";
 
-type CameraScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Camera'>;
+// Define the RootStackParamList with the 'Result' route
+type RootStackParamList = {
+  Camera: undefined;
+  Result: { data: { class_name: string; confidence: number } }; // Updated response structure
+};
+
+// Define the type for CameraScreen's navigation prop
+type CameraScreenNavigationProp = StackNavigationProp<RootStackParamList, "Camera">;
 
 interface CameraScreenProps {
   navigation: CameraScreenNavigationProp;
@@ -48,7 +53,7 @@ export default function CameraScreen({ navigation }: CameraScreenProps) {
 
   const testConnection = async () => {
     try {
-      await axios.get("http://192.168.8.167:8000/ping");
+      await axios.get("http://172.28.0.229:8000/ping");
       return true;
     } catch (error) {
       console.error("Connection error:", error);
@@ -63,22 +68,17 @@ export default function CameraScreen({ navigation }: CameraScreenProps) {
   
     if (cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync();
-      
-      if (!photo) {
-        Alert.alert("Error", "Failed to capture photo");
-        return;
-      }
-
+  
       const formData = new FormData();
       formData.append("file", {
         uri: photo.uri,
         type: "image/png",
         name: "photo.png",
-      } as any);
+      });
   
       try {
         const response = await axios.post(
-          "http://192.168.8.167:8000/get_animal_height",  // New API endpoint
+          "http://172.28.0.229:8000/get_animal_height", 
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
