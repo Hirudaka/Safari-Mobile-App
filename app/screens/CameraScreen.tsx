@@ -53,7 +53,7 @@ export default function CameraScreen({ navigation }: CameraScreenProps) {
 
   const testConnection = async () => {
     try {
-      await axios.get("http://172.28.0.229:8000/ping");
+      await axios.get("http://192.168.48.219:8000/ping");
       return true;
     } catch (error) {
       console.error("Connection error:", error);
@@ -78,7 +78,7 @@ export default function CameraScreen({ navigation }: CameraScreenProps) {
   
       try {
         const response = await axios.post(
-          "http://172.28.0.229:8000/get_animal_height", 
+          "http://192.168.48.219:8000/get_animal_height", 
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
