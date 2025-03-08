@@ -10,6 +10,15 @@
       "imageUrl": "sri-lanka-leopard-asian.jpg"
     },
     {
+      "name": "Mugger Crocodile",
+      "scientificName": "Crocodylus palustris",
+      "size": "Males: up to 4 meters; Females: smaller",
+      "age": "40–50 years",
+      "description": "The mugger crocodile, also known as the marsh crocodile, is one of the most widespread crocodilian species in Sri Lanka. It thrives in freshwater environments such as lakes, rivers, and marshes. Recognized by its broad snout and dark olive-green body, it is an ambush predator, feeding on fish, birds, and mammals. Despite its fearsome reputation, it plays a vital role in maintaining wetland ecosystems. Though generally shy, human-wildlife conflicts occasionally occur near water bodies.",
+      "class": "Crocodile",
+      "imageUrl": "Crocodile.jpg"
+    },
+    {
       
         "name": "Spotted Deer",
         "scientificName": "Axis axis",
@@ -20,11 +29,11 @@
         "imageUrl": "deer.jpg"
     },
     {
-      "name": "Indian Peacock",
+      "name": "Sri lankan Peacock",
       "scientificName": "Pavo cristatus",
       "size": "Males: up to 2.3 meters including tail; Females: smaller",
       "age": "10–25 years",
-      "description": "The Indian peafowl is distinguished by the male’s vibrant blue-green plumage and long, iridescent tail feathers, while females are less colorful with a brownish-green appearance. Omnivorous, it feeds on seeds, fruits, insects, and small reptiles. Often found in scrublands and forest clearings, males perform elaborate courtship displays by fanning their tails. Sacred in Sri Lanka, peafowls hold cultural significance in Hindu and Buddhist traditions.",
+      "description": "Sri lankan Peacock is distinguished by the male’s vibrant blue-green plumage and long, iridescent tail feathers, while females are less colorful with a brownish-green appearance. Omnivorous, it feeds on seeds, fruits, insects, and small reptiles. Often found in scrublands and forest clearings, males perform elaborate courtship displays by fanning their tails. Sacred in Sri Lanka, peafowls hold cultural significance in Hindu and Buddhist traditions.",
       "class": "Peacock",
       "imageUrl": "peacock.jpg"
     },
@@ -36,6 +45,35 @@
       "description": "The Sri Lankan elephant, the largest Asian elephant subspecies, has grey skin often marked with pink patches on its ears and face. Known for their intelligence and strong social bonds, they live in matriarchal herds, while males are often solitary. They feed on grasses, leaves, fruits, and bark, requiring vast amounts of food and water daily. Found in forests, grasslands, and near water, these elephants play a crucial role in seed dispersal and ecosystem balance.",
       "class": "Elephant",
       "imageUrl": "elephants.jpg"
-    }
-  ]
-}
+    },
+    {
+      "name": "Water Buffalo",
+      "scientificName": "Bubalus bubalis",
+      "size": "Males: 300–550 kg; Females: 250–450 kg",
+      "age": "Up to 25 years",
+      "description": "The water buffalo is a large, domesticated bovine species commonly found in wetlands, marshes, and grasslands of Sri Lanka. Recognized for its curved horns and dark grey to black coat, it plays an essential role in agriculture, especially in rice farming. These herbivores graze on grasses and aquatic vegetation and are known for their strong swimming abilities. Despite domestication, wild water buffalo populations still exist in Sri Lanka’s national parks, coexisting with leopards and crocodiles.",
+      "class": "Buffalo",
+      "imageUrl": "buffalo.jpg"
+    },
+    {
+      "name": "Sri Lankan Sloth Bear",
+      "scientificName": "Melursus ursinus inornatus",
+      "size": "Males: 80–140 kg; Females: 55–95 kg",
+      "age": "20–30 years in the wild",
+      "description": "The Sri Lankan sloth bear, a subspecies of the Indian sloth bear, is a nocturnal omnivore known for its shaggy black coat, long snout, and distinctive white chest marking. It primarily feeds on termites, ants, honey, fruits, and berries, using its strong claws to dig into termite mounds. Preferring dry forests and grasslands, it is an elusive and solitary animal, often avoiding human interaction. Due to habitat loss and declining populations, it is considered a vulnerable species in Sri Lanka.",
+      "class": "Bear",
+      "imageUrl": "sloth.jpg"
+     }
+      ,
+     
+      {
+        "name": "Sri Lankan Wild Boar",
+        "scientificName": "Sus scrofa cristatus",
+        "size": "Males: up to 150 kg; Females: smaller",
+        "age": "10–14 years",
+        "description": "The Sri Lankan wild boar is a robust and adaptable omnivore commonly found in forests, grasslands, and wetlands. It has coarse, bristly fur ranging from dark brown to black, with prominent tusks in males. Wild boars forage for roots, fruits, insects, and small vertebrates, playing a crucial role in seed dispersal. They are social animals, living in matriarchal groups, and are a significant prey species for leopards. Though typically shy, they can be aggressive when threatened.",
+        "class": "Boar",
+        "imageUrl": "boar.jpg"
+      }
+    ]
+  }

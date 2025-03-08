@@ -62,7 +62,7 @@ const Result = ({ route }) => {
       setIsSpeaking(false);
     } else if (animal?.description) {
       Speech.speak(animal.description, {
-        language: "it", // 🇮🇹 Change to Italian if needed
+        language: "en", 
         pitch: 1.0,
         rate: 1.0,
         onDone: () => setIsSpeaking(false),
