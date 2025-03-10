@@ -6,7 +6,7 @@ import * as Location from "expo-location";
 import * as Speech from "expo-speech";
 import imageMapping from "../../assets/imageMapping";
 
-const animalData = require("../../data/animalData.json");
+const animalData = require("../../app/data/animalData.json");
 
 const animalHeights: Record<string, number> = {
   Deer: 1.2,
