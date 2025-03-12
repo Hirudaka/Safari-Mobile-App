@@ -1,52 +1,89 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
+  RefreshControl,
   View,
   Text,
   ActivityIndicator,
   StyleSheet,
   Alert,
   FlatList,
+  Button,
 } from "react-native";
 import axios from "axios";
 
-const API_URL = "http://10.0.2.2:5001"; // Ensure this is correct for your backend
+const API_URL = "http://10.0.2.2:5001";
 
 const formatTime = (decimalHours) => {
+  if (decimalHours == null) return "N/A";
+
   const totalMinutes = Math.round(decimalHours * 60);
   const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
   const period = hours >= 12 ? "PM" : "AM";
   const formattedHours = hours % 12 || 12;
   const formattedMinutes = minutes.toString().padStart(2, "0");
+
   return `${formattedHours}:${formattedMinutes} ${period}`;
 };
 
 const DriverScheduleScreen = () => {
   const driverId = "a3487d91-d956-42af-bd04-bf072f22981c";
   const [schedules, setSchedules] = useState([]);
+  const [mainScheduleID, setMainScheduleID] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchSchedules = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`${API_URL}/api/optimized_schedule`);
+      const { optimized_schedule } = response.data;
+
+      if (Array.isArray(optimized_schedule) && optimized_schedule.length > 0) {
+        setSchedules(optimized_schedule);
+        setMainScheduleID(optimized_schedule[0]?._id || null);
+      } else {
+        throw new Error("Invalid response format or empty data.");
+      }
+    } catch (error) {
+      console.error("Error fetching schedules:", error);
+      Alert.alert("Error", "Failed to fetch schedules. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchSchedules = async () => {
-      try {
-        const response = await axios.get(`${API_URL}/api/optimized_schedule`);
-        console.log(response);
-      if (response.data && response.data.optimized_schedule && Array.isArray(response.data.optimized_schedule.schedule)) {
-  setSchedules(response.data.optimized_schedule.schedule);
-} else {
-  throw new Error("Invalid response format");
-}
-
-      } catch (error) {
-        console.error("Error fetching schedules:", error);
-        Alert.alert("Error", "Failed to fetch schedules.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchSchedules();
   }, []);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchSchedules().finally(() => setRefreshing(false));
+  }, []);
+
+  const handleBookSchedule = async (index) => {
+    const schedule = schedules[index];
+    console.log(schedule);
+    try {
+      const response = await axios.post(`${API_URL}/api/book_schedule`, {
+        driver_id: driverId,
+        mainSchedule_id: schedule._id,
+      });
+
+      if (response.status === 200) {
+        setSchedules((prevSchedules) =>
+          prevSchedules.map((item, i) =>
+            i === index ? { ...item, booked: true, driverId } : item
+          )
+        );
+        Alert.alert("Success", "Schedule booked successfully!");
+      }
+    } catch (error) {
+      console.error("Error booking schedule:", error);
+      Alert.alert("Error", "Failed to book schedule. Please try again.");
+    }
+  };
 
   if (loading) {
     return (
@@ -56,72 +93,35 @@ const DriverScheduleScreen = () => {
     );
   }
 
-  if (!schedules.length) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.title}>No Schedules Available</Text>
-      </View>
-    );
-  }
-
-   const handleBookSchedule = async (index) => {
-     const scheduleId = schedules[index].id; // Ensure each schedule has a unique ID
-
-     try {
-       const response = await axios.post(`${API_URL}/api/book_schedule`, {
-         schedule_id: scheduleId,
-         driver_id: driverId,
-       });
-
-       if (response.status === 200) {
-         // Update the local state to mark the schedule as booked
-         const updatedSchedules = [...schedules];
-         updatedSchedules[index].booked = true;
-         updatedSchedules[index].driverId = driverId; // Add driver ID to the local state
-         setSchedules(updatedSchedules);
-         Alert.alert("Success", "Schedule booked successfully!");
-       }
-     } catch (error) {
-       console.error("Error booking schedule:", error);
-       Alert.alert("Error", "Failed to book schedule.");
-     }
-   };
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Driver Schedule</Text>
-      <FlatList
-        data={schedules}
-        keyExtractor={(item, index) => item.id || index.toString()}
-        renderItem={({ item, index }) => (
-          <View style={styles.scheduleItem}>
-            <Text style={styles.scheduleTitle}>Schedule {index + 1}</Text>
-            <Text style={styles.text}>
-              Entry Time: {formatTime(item.entry_time)}
-            </Text>
-            <Text style={styles.text}>Traffic Level: {item.congestion}</Text>
-            <Text style={styles.text}>
-              Trip Time: {Math.floor(item.trip_time)}h{" "}
-              {Math.round((item.trip_time % 1) * 60)}m
-            </Text>
-            <Text style={styles.text}>
-              Speed:{" "}
-              {Array.isArray(item.speed) ? item.speed.join(" - ") : "N/A"} km/h
-            </Text>
-            <Text style={styles.text}>
-              Estimated Exit Time:{" "}
-              {formatTime(item.entry_time + item.trip_time)}
-            </Text>
-            <button
-              onClick={() => handleBookSchedule(index)}
-              disabled={item.booked}
-              style={item.booked ? styles.buttonDisabled : styles.button}
-            >
-              {item.booked ? "Booked" : "Book Schedule"}
-            </button>
-          </View>
-        )}
-      />
+      {schedules.length === 0 ? (
+        <Text style={styles.noScheduleText}>No Schedules Available</Text>
+      ) : (
+        <FlatList
+          data={schedules}
+          keyExtractor={(item, index) => item.id || `schedule-${index}`}
+          renderItem={({ item, index }) => (
+            <View style={styles.scheduleItem}>
+              <Text style={styles.scheduleTitle}>Schedule {index + 1}</Text>
+              <Text style={styles.text}>
+                Entry Time: {formatTime(item.entry_time)}
+              </Text>
+              <Text style={styles.text}>Traffic Level: {item.congestion}</Text>
+              <Text style={styles.text}>Trip Time: {item.trip_time}</Text>
+              <Button
+                title={item.booked ? "Booked" : "Book Schedule"}
+                onPress={() => handleBookSchedule(index)}
+                disabled={item.booked}
+              />
+            </View>
+          )}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        />
+      )}
     </View>
   );
 };
@@ -142,6 +142,12 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 20,
     textAlign: "center",
+  },
+  noScheduleText: {
+    fontSize: 18,
+    textAlign: "center",
+    marginTop: 20,
+    color: "gray",
   },
   scheduleItem: {
     backgroundColor: "#f8f9fa",
