@@ -24,62 +24,69 @@ export default function App() {
     }
   }, [permission]);
 
-  const handleBarCodeScanned = async ({
-    type,
-    data,
-  }: {
-    type: any;
-    data: any;
-  }) => {
-    setScanned(true);
+const handleBarCodeScanned = async ({
+  type,
+  data,
+}: {
+  type: any;
+  data: any;
+}) => {
+  setScanned(true);
 
-    try {
-      const parsedData = JSON.parse(data); // Parse JSON from QR code
-      const driverId = parsedData.driver_id; // Ensure driver ID exists
-      const vehicleId = parsedData.vehicle_id; // Extract vehicle ID
-      const speed = await getCurrentSpeed(); // Get current speed
-      const location = await getCurrentLocation(); // Get current location
-
-      if (!driverId || !vehicleId) {
-        Alert.alert(
-          "Invalid QR Code",
-          "Driver ID and Vehicle ID are required."
-        );
-        return;
-      }
-
-      setLoading(true); // Show loading indicator while calling API
-      const response = await fetch(`${API_URL}/api/start_trip`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          driver_id: driverId,
-          vehicle_id: vehicleId,
-          congestion: 0,
-          speed: [speed],
-          locations: [location],
-        }),
-      });
-
-      const result = await response.json();
-      setLoading(false);
-
-      if (response.ok) {
-        Alert.alert(
-          "Success",
-          `Trip started successfully! \nTrip ID: ${result.trip_details._id}`
-        );
-      } else {
-        Alert.alert("Error", result.error || "Failed to start trip.");
-      }
-    } catch (error) {
-      setLoading(false);
-      console.error("Error scanning QR code:", error);
-      Alert.alert("Error", "Invalid QR Code or API request failed.");
+  try {
+    // Extract driver ID from the scanned QR data
+    const prefix = "QR-";
+    if (!data.startsWith(prefix)) {
+      Alert.alert("Invalid QR Code", "QR code format is incorrect.");
+      return;
     }
-  };
+
+    const driverId = data.replace(prefix, ""); // Remove "QR-" prefix to get driver_id
+
+    // Fetch driver details from API using the extracted driver ID
+    const driverResponse = await fetch(`${API_URL}/api/drivers/${driverId}`);
+    const driverData = await driverResponse.json();
+
+    if (!driverResponse.ok || !driverData.vehicle_id) {
+      Alert.alert("Error", "Driver not found or missing vehicle ID.");
+      return;
+    }
+
+    const vehicleId = driverData.vehicle_id;
+    const speed = await getCurrentSpeed();
+    const location = await getCurrentLocation();
+
+    setLoading(true);
+    const response = await fetch(`${API_URL}/api/start_trip`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        driver_id: driverId,
+        vehicle_id: vehicleId,
+        congestion: 0,
+        speed: [speed],
+        locations: [location],
+      }),
+    });
+
+    const result = await response.json();
+    setLoading(false);
+
+    if (response.ok) {
+      Alert.alert(
+        "Success",
+        `Trip started successfully!\nTrip ID: ${result.trip_details._id}`
+      );
+    } else {
+      Alert.alert("Error", result.error || "Failed to start trip.");
+    }
+  } catch (error) {
+    setLoading(false);
+    console.error("Error scanning QR code:", error);
+    Alert.alert("Error", "Invalid QR Code or API request failed.");
+  }
+};
+
 
   if (!permission) {
     return <View />; // Loading state
