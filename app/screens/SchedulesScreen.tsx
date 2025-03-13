@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import axios from "axios";
 
-const API_URL = "http://10.0.2.2:5001";
+const API_URL = "http://192.168.8.167:5001";
 
 const formatTime = (decimalHours) => {
   if (decimalHours == null) return "N/A";
@@ -36,7 +36,7 @@ const DriverScheduleScreen = () => {
   const fetchSchedules = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${API_URL}/api/optimized_schedule`);
+      const response = await axios.get('http://192.168.8.167:5004/api/optimized_schedule');
       const { optimized_schedule } = response.data;
 
       if (Array.isArray(optimized_schedule) && optimized_schedule.length > 0) {
@@ -66,7 +66,7 @@ const DriverScheduleScreen = () => {
     const schedule = schedules[index];
     console.log(schedule);
     try {
-      const response = await axios.post(`${API_URL}/api/book_schedule`, {
+      const response = await axios.post(`http://192.168.8.167:5001/api/book_schedule`, {
         driver_id: driverId,
         mainSchedule_id: schedule._id,
       });
@@ -80,7 +80,7 @@ const DriverScheduleScreen = () => {
         Alert.alert("Success", "Schedule booked successfully!");
       }
     } catch (error) {
-      console.error("Error booking schedule:", error);
+      console.error("Axios Error:", error.response ? error.response.data : error.message);
       Alert.alert("Error", "Failed to book schedule. Please try again.");
     }
   };

@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { getCurrentLocation, getCurrentSpeed } from "../utils/location";
-const API_URL = "http://10.0.2.2:5001";
+const API_URL = "http://192.168.8.167:5004/";
 
 export default function App() {
   const [permission, requestPermission] = useCameraPermissions();
@@ -40,12 +40,13 @@ const handleBarCodeScanned = async ({
       Alert.alert("Invalid QR Code", "QR code format is incorrect.");
       return;
     }
-
+    console.log(data)
     const driverId = data.replace(prefix, ""); // Remove "QR-" prefix to get driver_id
-
     // Fetch driver details from API using the extracted driver ID
-    const driverResponse = await fetch(`${API_URL}/api/drivers/${driverId}`);
+    console.log(driverId)
+    const driverResponse = await fetch(`http://192.168.8.167:5004/get_driver/${driverId}`);
     const driverData = await driverResponse.json();
+    console.log("driver",driverData)
 
     if (!driverResponse.ok || !driverData.vehicle_id) {
       Alert.alert("Error", "Driver not found or missing vehicle ID.");
@@ -56,8 +57,12 @@ const handleBarCodeScanned = async ({
     const speed = await getCurrentSpeed();
     const location = await getCurrentLocation();
 
+    console.log(vehicleId)
+    console.log(speed)
+    console.log(location)
+
     setLoading(true);
-    const response = await fetch(`${API_URL}/api/start_trip`, {
+    const response = await fetch(`http://192.168.8.167:5004/api/start_trip`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
