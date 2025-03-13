@@ -32,6 +32,9 @@ const BottomTabNavigator = () => {
         tabBarActiveTintColor: '#5A8200',
         tabBarInactiveTintColor: 'black',
         tabBarStyle: route.name === 'Home' ? { display: 'none' } : { backgroundColor: '#fff', height: 60, paddingBottom: 8 },
+        headerStyle: { backgroundColor: '#5A8200' },
+        headerTintColor: '#fff',
+        headerTitleStyle: { fontWeight: 'bold' },
         /*tabBarStyle: {
           backgroundColor: '#fff',
           height: 60,

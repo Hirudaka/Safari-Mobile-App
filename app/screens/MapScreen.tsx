@@ -283,6 +283,8 @@ const MapScreen = () => {
                 return require('../../assets/images/leopard-icon.png');
             case 'Elephant':
                 return require('../../assets/images/elephant-icon.png');
+            case 'Peacock':
+                return require('../../assets/images/peacock-icon.png');
             default:
                 return require('../../assets/images/default-icon.png');
         }
