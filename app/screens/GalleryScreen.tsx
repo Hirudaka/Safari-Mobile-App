@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet, Dimensions, TextInput } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../index';
 import animalData from '../../data/animalData.json';
@@ -20,18 +20,33 @@ type Props = { navigation: GalleryScreenNavigationProp };
 
 const animals: Animal[] = animalData.animals;
 
-// Get device width for responsive layout
 const { width } = Dimensions.get('window');
-const CARD_SIZE = width / 2 - 15; // Adjusted for better spacing
-const IMAGE_HEIGHT = CARD_SIZE * 1.2; // Image height relative to width
+const CARD_SIZE = width / 2 - 20;
+const IMAGE_HEIGHT = CARD_SIZE * 1.2;
 
 const GalleryScreen: React.FC<Props> = ({ navigation }) => {
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredAnimals = animals.filter((animal) =>
+    animal.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <View style={styles.container}>
+      {/* Search Bar */}
+      <View style={styles.searchContainer}>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search Animals"
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+        />
+      </View>
+
       <FlatList
-        data={animals}
+        data={filteredAnimals}
         keyExtractor={(item) => item.name}
-        numColumns={2} // Grid layout with 2 columns
+        numColumns={2}
         renderItem={({ item }) => {
           const animalImage = item.imageUrl ? imageMapping[item.imageUrl] : null;
 
@@ -62,6 +77,20 @@ const GalleryScreen: React.FC<Props> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f8f8f8', paddingVertical: 10 },
   listContainer: { paddingBottom: 20 },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+    marginHorizontal: 15,
+  },
+  searchInput: {
+    flex: 1,
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 20,
+    paddingLeft: 15,
+  },
   card: {
     width: CARD_SIZE,
     height: IMAGE_HEIGHT,
@@ -69,7 +98,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     overflow: 'hidden',
     margin: 10,
-    elevation: 6, // Enhanced shadow effect
+    elevation: 6,
     shadowColor: '#000',
     shadowOpacity: 0.3,
     shadowOffset: { width: 0, height: 3 },
@@ -96,14 +125,14 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     width: '100%',
-    backgroundColor: 'rgba(0,0,0,0.5)', // Semi-transparent overlay
+    backgroundColor: 'rgba(0,0,0,0.5)',
     paddingVertical: 8,
     alignItems: 'center',
   },
   name: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#fff', // White text for better visibility
+    color: '#fff',
   },
 });
 
