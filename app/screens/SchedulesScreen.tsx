@@ -10,8 +10,10 @@ import {
   Button,
 } from "react-native";
 import axios from "axios";
+import TrafficCongestionPopup from "./TrafficCongestionPopup"; 
+import { getCurrentLocation, getCurrentSpeed } from "../utils/location";
 
-const API_URL = "http://192.168.8.167:5001";
+const API_URL = "http://10.0.2.2:5001";
 
 const formatTime = (decimalHours) => {
   if (decimalHours == null) return "N/A";
@@ -29,19 +31,18 @@ const formatTime = (decimalHours) => {
 const DriverScheduleScreen = () => {
   const driverId = "a3487d91-d956-42af-bd04-bf072f22981c";
   const [schedules, setSchedules] = useState([]);
-  const [mainScheduleID, setMainScheduleID] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [popupVisible, setPopupVisible] = useState(false); // State to manage popup visibility
 
   const fetchSchedules = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://192.168.8.167:5004/api/optimized_schedule');
+      const response = await axios.get(`${API_URL}/api/optimized_schedule`);
       const { optimized_schedule } = response.data;
 
       if (Array.isArray(optimized_schedule) && optimized_schedule.length > 0) {
         setSchedules(optimized_schedule);
-        setMainScheduleID(optimized_schedule[0]?._id || null);
       } else {
         throw new Error("Invalid response format or empty data.");
       }
@@ -66,7 +67,7 @@ const DriverScheduleScreen = () => {
     const schedule = schedules[index];
     console.log(schedule);
     try {
-      const response = await axios.post(`http://192.168.8.167:5001/api/book_schedule`, {
+      const response = await axios.post(`${API_URL}/api/book_schedule`, {
         driver_id: driverId,
         mainSchedule_id: schedule._id,
       });
@@ -85,6 +86,49 @@ const DriverScheduleScreen = () => {
     }
   };
 
+  const openTrafficPopup = () => {
+    setPopupVisible(true); // Open the popup
+  };
+
+  const closeTrafficPopup = () => {
+    setPopupVisible(false); // Close the popup
+  };
+
+ const handleTrafficSubmit = async (congestionLevel) => {
+  const currentLocation = await getCurrentLocation(); // Replace with actual method for fetching the location
+  const currentSpeed = await getCurrentSpeed(); // Replace with actual method for fetching the speed
+
+  const tripId = "67d27775f72e543d20aee9de"; // Replace with the actual trip ID you're working with
+
+  try {
+    const response = await fetch(`${API_URL}/api/trips/${tripId}/updateStatus`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        congestion: congestionLevel,
+        locations: [currentLocation], // Assuming you're sending one location
+        speed: [currentSpeed], // Assuming you're sending one speed
+        trip_time: 15, // Assuming you're sending a trip time value (replace with actual value)
+      }),
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      Alert.alert("Congestion Level Updated", `Selected Level: ${congestionLevel}`);
+      closeTrafficPopup(); // Close the popup after submission
+      // Optionally update the UI or state here if necessary, e.g.:
+      // setSchedules(updatedSchedules);
+    } else {
+      Alert.alert("Error", result.error || "Failed to update trip status");
+    }
+  } catch (error) {
+    console.error("Error updating congestion level:", error);
+    Alert.alert("Error", "Failed to update congestion level. Please try again.");
+  }
+};
+
+
   if (loading) {
     return (
       <View style={styles.loaderContainer}>
@@ -96,12 +140,13 @@ const DriverScheduleScreen = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Driver Schedule</Text>
+      <Button title="Open Traffic Popup" onPress={openTrafficPopup} />
       {schedules.length === 0 ? (
         <Text style={styles.noScheduleText}>No Schedules Available</Text>
       ) : (
         <FlatList
           data={schedules}
-          keyExtractor={(item, index) => item.id || `schedule-${index}`}
+          keyExtractor={(item, index) => item._id || `schedule-${index}`}
           renderItem={({ item, index }) => (
             <View style={styles.scheduleItem}>
               <Text style={styles.scheduleTitle}>Schedule {index + 1}</Text>
@@ -122,6 +167,13 @@ const DriverScheduleScreen = () => {
           }
         />
       )}
+
+      {/* Traffic Congestion Popup */}
+      <TrafficCongestionPopup
+        visible={popupVisible}
+        onCancel={closeTrafficPopup}
+        onSubmit={handleTrafficSubmit}
+      />
     </View>
   );
 };

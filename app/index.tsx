@@ -15,15 +15,15 @@ const Stack = createStackNavigator<RootStackParamList>();
 
 const Index = () => {
   return (
-    <Stack.Navigator initialRouteName="QRScannerScreen">
+    <Stack.Navigator initialRouteName="DriverScheduleScreen">
       <Stack.Screen name="Camera" component={CameraScreen} />
       <Stack.Screen name="Result" component={Result} />
       <Stack.Screen name="UserMapScreen" component={UserMapScreen} />
       <Stack.Screen name="QRScannerScreen" component={QRScannerScreen} />
-      <Stack.Screen
-        name="DriverScheduleScreen"
-        component={DriverScheduleScreen}
-      />
+        <Stack.Screen
+          name="DriverScheduleScreen"
+          component={DriverScheduleScreen}
+        />
       <Stack.Screen
         name="DriverProfileScreen"
         component={DriverProfileScreen}

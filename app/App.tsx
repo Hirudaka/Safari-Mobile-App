@@ -3,9 +3,11 @@ import { NavigationContainer } from "@react-navigation/native";
 import { View, Text, Alert, AppState, AppStateStatus } from "react-native";
 import axios from "axios";
 import Index from "./index";
- import { getCurrentLocation, getCurrentSpeed } from "./utils/location";
- const API_URL = "http://10.0.2.2:5001"; 
- 
+import { getCurrentLocation, getCurrentSpeed } from "./utils/location";
+
+
+const API_URL = "http://10.0.2.2:5001"; 
+
 const App = () => {
   return (
     <NavigationContainer>
@@ -15,6 +17,7 @@ const App = () => {
 };
 
 export default App;
+
 
 // import React, { useState, useEffect } from "react";
 // import { View, Text, Alert, AppState, AppStateStatus } from "react-native";
