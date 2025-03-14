@@ -1,17 +1,13 @@
 {
   "expo": {
-    "name": "NaviTsx",
-    "slug": "NaviTsx",
+    "name": "SafariAppTs",
+    "slug": "SafariAppTs",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
-    "splash": {
-      "image": "./assets/images/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
+    "newArchEnabled": true,
     "ios": {
       "supportsTablet": true
     },
@@ -28,8 +24,27 @@
     },
     "plugins": [
       "expo-router",
+
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ],
       "expo-font",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+        }
+      ]
+
+      ,
       "expo-barcode-scanner"
+
     ],
     "experiments": {
       "typedRoutes": true

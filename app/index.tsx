@@ -1,3 +1,11 @@
+
+
+import { NavigationContainer } from '@react-navigation/native';
+import MapScreen from './screens/MapScreen';
+import MapFilters from './screens/MapFiltersScreen';
+
+//import { RootStackParamList } from './types/navigation';
+
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import CameraScreen from './screens/CameraScreen';
@@ -32,6 +40,7 @@ export type RootStackParamList = {
   AnimalDetail: { animal: Animal }; 
 };
 
+
 const Stack = createStackNavigator<RootStackParamList>();
 
 const Index = () => {
@@ -54,9 +63,7 @@ const Index = () => {
       <Stack.Screen name="Gallery" component={GalleryScreen} />
       <Stack.Screen name="AnimalDetail" component={AnimalDetailScreen} />
       <Stack.Screen name="QRScannerScreen" component={QRScannerScreen} />
-      
-        <Stack.Screen
-          name="DriverScheduleScreen"
+        <Stack.Screen name="DriverScheduleScreen"
           component={DriverScheduleScreen}
         />
       <Stack.Screen
@@ -64,8 +71,21 @@ const Index = () => {
         component={DriverProfileScreen}
       />
 
+      <Stack.Screen 
+        name="MapFilters" 
+        component={MapFilters}
+        options={{ title: 'Map Filters' }}
+      />
+   
+      <Stack.Screen 
+        name="MapScreen" 
+        component={MapScreen}
+        options={{ title: 'Map' }}
+      />
+
     </Stack.Navigator>
   );
 };
 
 export default Index;
+

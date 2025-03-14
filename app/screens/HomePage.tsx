@@ -26,7 +26,10 @@ const HomePage = () => {
 
         <TouchableOpacity 
           style={styles.card} 
-          onPress={() => navigation.navigate('Camera')}
+
+          onPress={() => navigation.navigate('MapFilters')}
+
+     
         >
           <View style={styles.iconContainer}>
             <Ionicons name="map" size={32} color="#5A8200" />
@@ -37,6 +40,7 @@ const HomePage = () => {
         <TouchableOpacity 
           style={styles.card} 
           onPress={() => navigation.navigate('Gallery')}
+
         >
           <View style={styles.iconContainer}>
             <Ionicons name="map" size={32} color="#5A8200" />
@@ -44,6 +48,7 @@ const HomePage = () => {
           <Text style={styles.cardTitle}>Open Map</Text>
           <Text style={styles.cardSubtitle}>View and filter locations</Text>
         </TouchableOpacity>
+
         <TouchableOpacity 
           style={styles.card} 
           onPress={() => navigation.navigate('QRScannerScreen')}
