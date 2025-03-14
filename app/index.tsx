@@ -3,6 +3,11 @@ import { createStackNavigator } from '@react-navigation/stack';
 import CameraScreen from './screens/CameraScreen';
 import Result from './screens/Result';  
 import UserMapScreen from './screens/UserMapScreen';
+
+import DriverProfileScreen from './screens/DriverProfileScreen';
+import QRScannerScreen from './screens/QRScannerScreen';
+import DriverScheduleScreen from './screens/SchedulesScreen';
+
 import HomePage from './screens/HomePage';
 import AnimalDetailScreen from './screens/AnimalDetailScreen';
 import GalleryScreen from './screens/GalleryScreen';
@@ -18,7 +23,6 @@ export interface Animal {
   imageUrl: string;
 }
 
-
 export type RootStackParamList = {
   Home: undefined;  
   Camera: undefined;
@@ -32,6 +36,7 @@ const Stack = createStackNavigator<RootStackParamList>();
 
 const Index = () => {
   return (
+
     <Stack.Navigator initialRouteName="Home"
     screenOptions={{
       headerStyle: {
@@ -48,6 +53,16 @@ const Index = () => {
       <Stack.Screen name="UserMapScreen" component={UserMapScreen} />
       <Stack.Screen name="Gallery" component={GalleryScreen} />
       <Stack.Screen name="AnimalDetail" component={AnimalDetailScreen} />
+      <Stack.Screen name="QRScannerScreen" component={QRScannerScreen} />
+      
+        <Stack.Screen
+          name="DriverScheduleScreen"
+          component={DriverScheduleScreen}
+        />
+      <Stack.Screen
+        name="DriverProfileScreen"
+        component={DriverProfileScreen}
+      />
 
     </Stack.Navigator>
   );
