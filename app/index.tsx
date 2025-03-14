@@ -61,26 +61,10 @@ const Index = () => {
       <Stack.Screen name="Gallery" component={GalleryScreen} />
       <Stack.Screen name="AnimalDetail" component={AnimalDetailScreen} />
       <Stack.Screen name="QRScannerScreen" component={QRScannerScreen} />
-        <Stack.Screen name="DriverScheduleScreen"
-          component={DriverScheduleScreen}
-        />
-      <Stack.Screen
-        name="DriverProfileScreen"
-        component={DriverProfileScreen}
-      />
-
-      <Stack.Screen 
-        name="MapFilters" 
-        component={MapFilters}
-        options={{ title: 'Map Filters' }}
-      />
-   
-      <Stack.Screen 
-        name="MapScreen" 
-        component={MapScreen}
-        options={{ title: 'Map' }}
-      />
-
+      <Stack.Screen name="DriverScheduleScreen" component={DriverScheduleScreen}/>
+      <Stack.Screen name="DriverProfileScreen" component={DriverProfileScreen}/>
+      <Stack.Screen name="MapFilters" component={MapFilters} options={{ title: 'Map Filters' }}/>  
+      <Stack.Screen  name="MapScreen" component={MapScreen} options={{ title: 'Map' }} />
     </Stack.Navigator>
   );
 };
