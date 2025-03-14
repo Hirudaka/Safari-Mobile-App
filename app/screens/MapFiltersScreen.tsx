@@ -70,7 +70,7 @@ const MapFiltersScreen = () => {
     ];
 
     const animals = [
-        { value: 'all', image: require('../../assets/images/default-icon.png'), label: 'All' },
+        { value: 'all', image: require('../../assets/images/park.png'), label: 'All' },
         { value: 'Deer', image: require('../../assets/images/deer-icon.png'), label: 'Deer' },
         { value: 'Leopard', image: require('../../assets/images/leopard-icon.png'), label: 'Leopard' },
         { value: 'Elephant', image: require('../../assets/images/elephant-icon.png'), label: 'Elephant' },
