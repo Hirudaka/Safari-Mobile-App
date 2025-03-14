@@ -98,7 +98,7 @@ const DriverScheduleScreen = () => {
   const currentLocation = await getCurrentLocation(); // Replace with actual method for fetching the location
   const currentSpeed = await getCurrentSpeed(); // Replace with actual method for fetching the speed
 
-  const tripId = "67d27775f72e543d20aee9de"; // Replace with the actual trip ID you're working with
+  const tripId = "67d3f0a9fe557d23758faca5"; // Replace with the actual trip ID you're working with
 
   try {
     const response = await fetch(`${API_URL}/api/trips/${tripId}/updateStatus`, {

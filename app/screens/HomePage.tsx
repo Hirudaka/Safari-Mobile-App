@@ -59,6 +59,17 @@ const HomePage = () => {
           <Text style={styles.cardTitle}>QR</Text>
           <Text style={styles.cardSubtitle}>Take photos using your camera</Text>
         </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.card} 
+          onPress={() => navigation.navigate('DriverScheduleScreen')}
+        >
+          <View style={styles.iconContainer}>
+            <Ionicons name="camera" size={32} color="#5A8200" />
+          </View>
+          <Text style={styles.cardTitle}>QR</Text>
+          <Text style={styles.cardSubtitle}>Take photos using your camera</Text>
+        </TouchableOpacity>
+
 
       </View>
     </View>
