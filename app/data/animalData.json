@@ -1,0 +1,41 @@
+{
+  "animals": [
+    {
+      "name": "Sri Lankan Leopard",
+      "scientificName": "Panthera pardus kotiya",
+      "size": "Males: 56–77 kg; Females: 29–34 kg",
+      "age": "12–15 years in the wild",
+      "description": "The Sri Lankan leopard, an apex predator and endemic subspecies, is recognized for its golden-yellow coat adorned with black rosettes and spots. Solitary and territorial, it is active both day and night, hunting a variety of prey such as deer, wild boar, and monkeys. It thrives in dry forests, grasslands, and scrublands, particularly in Yala National Park, which has one of the world’s highest leopard densities. Known for its elusive nature, it is a symbol of Sri Lanka's rich biodiversity.",
+      "class": "Leopard",
+      "imageUrl": "sri-lanka-leopard-asian.jpg"
+    },
+    {
+      
+        "name": "Spotted Deer",
+        "scientificName": "Axis axis",
+        "size": "Males: up to 85 kg; Females: slightly smaller",
+        "age": "8–14 years in the wild",
+        "description": "The spotted deer, also known as chital, is one of the most graceful and common deer species in Sri Lanka, especially in Yala National Park. Recognized by its reddish-brown coat adorned with white spots, it exhibits a striking contrast. These herbivores are highly social, often seen grazing in groups in open grasslands and forest edges. Feeding on grasses, leaves, and fruits, they play an essential role in the ecosystem. Known for their alert and swift nature, spotted deer are a primary prey for leopards in the region.",
+        "class": "Deer",
+        "imageUrl": "deer.jpg"
+    },
+    {
+      "name": "Indian Peacock",
+      "scientificName": "Pavo cristatus",
+      "size": "Males: up to 2.3 meters including tail; Females: smaller",
+      "age": "10–25 years",
+      "description": "The Indian peafowl is distinguished by the male’s vibrant blue-green plumage and long, iridescent tail feathers, while females are less colorful with a brownish-green appearance. Omnivorous, it feeds on seeds, fruits, insects, and small reptiles. Often found in scrublands and forest clearings, males perform elaborate courtship displays by fanning their tails. Sacred in Sri Lanka, peafowls hold cultural significance in Hindu and Buddhist traditions.",
+      "class": "Peacock",
+      "imageUrl": "peacock.jpg"
+    },
+    {
+      "name": "Asian Elephant",
+      "scientificName": "Elephas maximus maximus",
+      "size": "Up to 5,500 kg",
+      "age": "50–70 years",
+      "description": "The Sri Lankan elephant, the largest Asian elephant subspecies, has grey skin often marked with pink patches on its ears and face. Known for their intelligence and strong social bonds, they live in matriarchal herds, while males are often solitary. They feed on grasses, leaves, fruits, and bark, requiring vast amounts of food and water daily. Found in forests, grasslands, and near water, these elephants play a crucial role in seed dispersal and ecosystem balance.",
+      "class": "Elephant",
+      "imageUrl": "elephants.jpg"
+    }
+  ]
+}
