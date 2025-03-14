@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { FontAwesome } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Location from "expo-location";
 import * as Speech from "expo-speech";
 import imageMapping from "../../assets/imageMapping";
+import AggressivePopup from "./AggressivePopup";
 
 const animalData = require("../../data/animalData.json");
 
@@ -16,7 +17,6 @@ const animalHeights: Record<string, number> = {
   Peacock: 1.1,
 };
 
-// Add safety tips for each animal
 const safetyTips: Record<string, string[]> = {
   Deer: [
     "Although non-aggressive, always maintain a safe distance. Do not approach them or attempt to feed them.", 
@@ -32,7 +32,6 @@ const safetyTips: Record<string, string[]> = {
   ],
 };
 
-// Safety levels for each animal
 const safetyLevels: Record<string, string> = {
   Deer: 'safe',
   Elephant: 'dangerous',
@@ -40,8 +39,16 @@ const safetyLevels: Record<string, string> = {
   Peacock: 'caution',
 };
 
-const Result = ({ route }) => {
-  const { class_name, classification_confidence, height_pixels, detection_confidence } = route.params.data;
+const Result = () => {
+  const route = useRoute();
+  const { data, onAggressiveResponse } = route.params;
+  const {
+    class_name,
+    classification_confidence,
+    height_pixels,
+    detection_confidence,
+  } = data;
+  const [aggressiveData, setAggressiveData] = useState(null);
   const navigation = useNavigation();
   const [userLocation, setUserLocation] = useState<Location.LocationObject | null>(null);
   const [distance, setDistance] = useState<number | null>(null);
@@ -67,6 +74,14 @@ const Result = ({ route }) => {
     }
   }, [class_name, height_pixels]);
 
+  useEffect(() => {
+    if (onAggressiveResponse) {
+      onAggressiveResponse().then((response) => {
+        setAggressiveData(response);
+      });
+    }
+  }, [onAggressiveResponse]);
+
   const handleNavigateToMap = () => {
     if (userLocation && distance !== null) {
       navigation.navigate("UserMapScreen", {
@@ -77,7 +92,22 @@ const Result = ({ route }) => {
       });
     }
   };
+  const [showAggressivePopup, setShowAggressivePopup] = useState(false);
 
+  useEffect(() => {
+    if (
+      aggressiveData &&
+      (class_name === "Leopard" || class_name === "Elephant") &&
+      distance !== null &&
+      distance > 2 &&
+      distance < 10 &&
+      aggressiveData.similarity_score > 0.85 &&
+      ((class_name === "Leopard" && aggressiveData.predicted_class === "Known_leopard") ||
+        (class_name === "Elephant" && aggressiveData.predicted_class === "Known_Elephant"))
+    ) {
+      setShowAggressivePopup(true);
+    }
+  }, [aggressiveData, class_name, distance]);
   const animal = animalData.animals.find((a: { class: string }) => a.class === class_name);
   const animalImage = animal ? imageMapping[animal.imageUrl] : null;
 
@@ -99,7 +129,6 @@ const Result = ({ route }) => {
   const tips = safetyTips[class_name] || ["Safety tips not available for this animal."];
   const safetyLevel = safetyLevels[class_name] || "unknown";
 
-  // Get safety icon and color based on the level
   const getSafetyIcon = (level: string) => {
     switch (level) {
       case 'dangerous':
@@ -127,59 +156,71 @@ const Result = ({ route }) => {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.headerContainer}>
-        {animalImage && <Image source={animalImage} style={styles.image} resizeMode="cover" />}
-        <View style={styles.overlay} />
-        <View style={styles.textContainer}>
-          <Text style={styles.headerTitle}>{animal ? animal.name : "Unknown Animal"}</Text>
-          <Text style={styles.headerSubtitle}>
-            {animal?.scientificName}
-          </Text>
+    <View style={{ flex: 1 }}>
+      <ScrollView style={styles.container}>
+        <View style={styles.headerContainer}>
+          {animalImage && <Image source={animalImage} style={styles.image} resizeMode="cover" />}
+          <View style={styles.overlay} />
+          <View style={styles.textContainer}>
+            <Text style={styles.headerTitle}>{animal ? animal.name : "Unknown Animal"}</Text>
+            <Text style={styles.headerSubtitle}>
+              {animal?.scientificName}
+            </Text>
+          </View>
         </View>
-      </View>
-
-      <View style={styles.contentContainer}>
-        <Text style={styles.description}>{animal?.description}</Text>
-        
-        <Text style={styles.details}>
-          <Text style={styles.label}>Size:</Text> {animal?.size}
-        </Text>
-        <Text style={styles.details}>
-          <Text style={styles.label}>Age:</Text> {animal?.age}
-        </Text>       
-        <Text style={styles.details}>
-          <Text style={styles.label}>Estimated Distance:</Text> {distance !== null ? `${distance.toFixed(2)} meters` : "Unavailable"}
-        </Text>
-        <Text style={styles.leftText}>
-          <Text style={styles.label}>Confidence:</Text> {classification_confidence ? classification_confidence.toFixed(2) + "%" : "N/A"}
-        </Text>
-
-        {/* Safety Tips Section */}
-        <View style={[styles.safetyTipsContainer, getSafetyColor(safetyLevel)]}>
-          <Text style={styles.safetyTipsTitle}>Safety Tips:  {getSafetyIcon(safetyLevel)}</Text>
+        <AggressivePopup
+  visible={showAggressivePopup}
+  onClose={() => setShowAggressivePopup(false)}
+  predictedClass={aggressiveData?.predicted_class || ""}
+  similarityScore={aggressiveData?.similarity_score || 0}
+/>
+        <View style={styles.contentContainer}>
+          <Text style={styles.description}>{animal?.description}</Text>
           
-          {tips.map((tip, index) => (
-            <Text key={index} style={styles.safetyTip}>{`${tip}`}</Text>
-          ))}
+          <Text style={styles.details}>
+            <Text style={styles.label}>Size:</Text> {animal?.size}
+          </Text>
+          <Text style={styles.details}>
+            <Text style={styles.label}>Age:</Text> {animal?.age}
+          </Text>       
+          <Text style={styles.details}>
+            <Text style={styles.label}>Estimated Distance:</Text> {distance !== null ? `${distance.toFixed(2)} meters` : "Unavailable"}
+          </Text>
+          <Text style={styles.leftText}>
+            <Text style={styles.label}>Confidence:</Text> {classification_confidence ? classification_confidence.toFixed(2) + "%" : "N/A"}
+          </Text>
+          {aggressiveData && (
+            <>
+              <Text style={styles.details}>
+                <Text style={styles.label}>Predicted Aggressive Animal:</Text> {aggressiveData.predicted_class}
+              </Text>
+              <Text style={styles.details}>
+                <Text style={styles.label}>Similarity Score:</Text> {aggressiveData.similarity_score ? aggressiveData.similarity_score.toFixed(4) : "N/A"}
+              </Text>
+            </>
+          )}
+          <View style={[styles.safetyTipsContainer, getSafetyColor(safetyLevel)]}>
+            <Text style={styles.safetyTipsTitle}>Safety Tips:  {getSafetyIcon(safetyLevel)}</Text>
+            {tips.map((tip, index) => (
+              <Text key={index} style={styles.safetyTip}>{`${tip}`}</Text>
+            ))}
+          </View>
         </View>
-      </View>
 
-      {/* Voice Control Button */}
-      <TouchableOpacity style={styles.voiceButton} onPress={toggleSpeech}>
-        <FontAwesome name={isSpeaking ? "pause" : "play"} size={24} color="#fff" />
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.voiceButton} onPress={toggleSpeech}>
+          <FontAwesome name={isSpeaking ? "pause" : "play"} size={24} color="#fff" />
+        </TouchableOpacity>
 
-      {/* Floating Map Button */}
-      <TouchableOpacity style={styles.mapButton} onPress={handleNavigateToMap}>
-        <FontAwesome name="map-marker" size={28} color="#fff" />
-      </TouchableOpacity>
-    </ScrollView>
+        <TouchableOpacity style={styles.mapButton} onPress={handleNavigateToMap}>
+          <FontAwesome name="map-marker" size={28} color="#fff" />
+        </TouchableOpacity>
+      </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#f8f9fa" },
+  container: { flex: 1 , backgroundColor: "#f8f9fa" },
   headerContainer: {
     position: 'relative',
     alignItems: 'center',
@@ -252,7 +293,7 @@ const styles = StyleSheet.create({
   voiceButton: {
     position: "absolute",
     right: 20,
-    bottom: -70,
+    bottom: 10,
     backgroundColor: "#2e7d32",
     padding: 18,
     borderRadius: 50,
@@ -263,9 +304,9 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   mapButton: {
-    position: "absolute",
+    position: "relative",
     left: 20,
-    bottom: -70,
+    bottom: 10,
     backgroundColor: "#d32f2f",
     padding: 18,
     borderRadius: 50,
