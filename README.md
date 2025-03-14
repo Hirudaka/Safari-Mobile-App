@@ -9,12 +9,21 @@
    ```
    
 2. Install dependencies
+# Welcome to your Expo app 👋
+
+This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+
+## Get started
+
+1. Install dependencies
 
    ```bash
    npm install
    ```
-
 3. Start the app
+
+2. Start the app
+
 
    ```bash
     npx expo start
@@ -77,6 +86,15 @@ You can start developing by editing the files inside the **app** directory. This
   }
 ```
 
+## Get a fresh project
+
+When you're ready, run:
+
+```bash
+npm run reset-project
+```
+
+This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
 
 ## Learn more
 
@@ -91,9 +109,3 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
-
-
-
-
-
-

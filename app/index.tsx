@@ -1,5 +1,3 @@
-
-
 import { NavigationContainer } from '@react-navigation/native';
 import MapScreen from './screens/MapScreen';
 import MapFilters from './screens/MapFiltersScreen';

@@ -24,7 +24,6 @@
     },
     "plugins": [
       "expo-router",
-
       [
         "expo-splash-screen",
         {
@@ -44,7 +43,6 @@
 
       ,
       "expo-barcode-scanner"
-
     ],
     "experiments": {
       "typedRoutes": true
