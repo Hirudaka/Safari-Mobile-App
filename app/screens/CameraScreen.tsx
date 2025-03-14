@@ -53,9 +53,7 @@ export default function CameraScreen({ navigation }: CameraScreenProps) {
 
   const testConnection = async () => {
     try {
-
       await axios.get("http://192.168.8.167:8000/ping");
-
       return true;
     } catch (error) {
       console.error("Connection error:", error);
@@ -79,16 +77,26 @@ export default function CameraScreen({ navigation }: CameraScreenProps) {
       });
   
       try {
-        const response = await axios.post(
-
-          "http://192.168.8.167:8000/get_animal_height", 
-
+        // Call the first API to get animal height and classification
+        const heightResponse = await axios.post(
+          "http://192.168.8.167:8000/get_animal_height",
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
   
-        // Navigate to Result page with updated response data
-        navigation.navigate("Result", { data: response.data });
+        // Navigate to Result page with initial data
+        navigation.navigate("Result", {
+          data: heightResponse.data,
+          onAggressiveResponse: async () => {
+            // Call the second API to predict aggressive animal
+            const aggressiveResponse = await axios.post(
+              "http://192.168.8.167:8000/predict_aggressive_animal",
+              formData,
+              { headers: { "Content-Type": "multipart/form-data" } }
+            );
+            return aggressiveResponse.data;
+          },
+        });
       } catch (error) {
         console.error(error);
         Alert.alert("Error", "There was an error processing the image");
@@ -157,6 +165,4 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
   },
-
 });
-
