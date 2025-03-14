@@ -33,6 +33,16 @@
           "backgroundColor": "#ffffff"
         }
       ],
+      "expo-font",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+        }
+      ]
+
+      ,
+      "expo-barcode-scanner"
       "expo-font"
     ],
     "experiments": {

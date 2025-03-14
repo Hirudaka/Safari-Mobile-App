@@ -1,67 +1,96 @@
-interface Location {
-  lat: number;
-  lang: number;
-}
+import { 
+    Animal, 
+    SeasonalPredictions, 
+    MapFilters, 
+    PredictionPoint,
+    Season,
+    TimeOfDay,
+    SeasonData
+} from '../types/map.types';
 
-interface Animal {
-  [key: string]: Location[];
-}
+export default function calculatePredictions(
+    animals: { [key: string]: Animal[] },
+    season: Season,
+    timeOfDay: TimeOfDay
+): SeasonalPredictions {
+    const predictions: SeasonalPredictions = {};
 
-interface MeanCenter {
-  [key: string]: {
-    [key: string]: {
-      meanLatitude: number;
-      meanLongitude: number;
+    const isDayTime = (timestamp: string) => {
+        const date = new Date(timestamp);
+        const hour = date.getUTCHours();
+        // Debug timestamp parsing
+        console.log(`Parsing timestamp: ${timestamp}, Hour: ${hour}, TimeOfDay: ${timeOfDay}`);
+        return timeOfDay === 'dayTime' ? (hour >= 6 && hour < 18) : (hour < 6 || hour >= 18);
     };
-  };
-}
 
-export default function calculateMeanCenter(animals: Animal, clusterSize: number): MeanCenter {
-  const meanCenters: MeanCenter = {};
+    const isInSeason = (timestamp: string, targetSeason: Season): boolean => {
+        const date = new Date(timestamp);
+        const month = date.getUTCMonth();
+        const seasonRanges: Record<Season, number[]> = {
+            'Spring': [2, 3, 4],
+            'Summer': [5, 6, 7],
+            'Fall': [8, 9, 10],
+            'Winter': [11, 0, 1]
+        };
+        // Debug season matching
+        console.log(`Checking season for month ${month} against target ${targetSeason}`);
+        return seasonRanges[targetSeason].includes(month);
+    };
 
-  for (const animal in animals) {
-    if (Object.prototype.hasOwnProperty.call(animals, animal)) {
-      const locations = animals[animal];
-      const groupedLocations = groupLocationsByCluster(locations, clusterSize);
-
-      meanCenters[animal] = {};
-
-      for (const group in groupedLocations) {
-        if (Object.prototype.hasOwnProperty.call(groupedLocations, group)) {
-          const groupLocations = groupedLocations[group];
-          const sumLatitude = groupLocations.reduce((acc, current) => acc + current.lat, 0);
-          const sumLongitude = groupLocations.reduce((acc, current) => acc + current.lang, 0);
-          const count = groupLocations.length;
-
-          if (count > 0) {
-            const meanLatitude = sumLatitude / count;
-            const meanLongitude = sumLongitude / count;
-
-            meanCenters[animal][group] = {
-              meanLatitude,
-              meanLongitude,
-            };
-          } else {
-            console.log(`No locations found for ${animal} in group ${group}`);
-          }
+    for (const animal in animals) {
+        if (!predictions[animal]) {
+            predictions[animal] = {};
         }
-      }
+        if (!predictions[animal][season]) {
+            predictions[animal][season] = {
+                dayTime: { predictions: [] },
+                evening: { predictions: [] }
+            } as SeasonData;
+        }
+
+        const filteredLocations = animals[animal].filter(loc => 
+            isInSeason(loc.timestamp, season) && isDayTime(loc.timestamp)
+        );
+
+        if (filteredLocations.length > 0) {
+            const meanLat = filteredLocations.reduce((sum, loc) => sum + loc.lat, 0) / filteredLocations.length;
+            const meanLng = filteredLocations.reduce((sum, loc) => sum + loc.lang, 0) / filteredLocations.length;
+
+            const predictionPoints: PredictionPoint[] = [
+                {
+                    latitude: meanLat,
+                    longitude: meanLng,
+                    probability: 0.9
+                },
+                {
+                    latitude: meanLat + (Math.random() * 0.01 - 0.005),
+                    longitude: meanLng + (Math.random() * 0.01 - 0.005),
+                    probability: 0.7
+                },
+                {
+                    latitude: meanLat + (Math.random() * 0.015 - 0.0075),
+                    longitude: meanLng + (Math.random() * 0.015 - 0.0075),
+                    probability: 0.5
+                },
+                {
+                    latitude: meanLat + (Math.random() * 0.02 - 0.01),
+                    longitude: meanLng + (Math.random() * 0.02 - 0.01),
+                    probability: 0.3
+                },
+                {
+                    latitude: meanLat + (Math.random() * 0.025 - 0.0125),
+                    longitude: meanLng + (Math.random() * 0.025 - 0.0125),
+                    probability: 0.1
+                }
+            ];
+
+            if (predictions[animal][season]) {
+                predictions[animal][season]![timeOfDay] = {
+                    predictions: predictionPoints
+                };
+            }
+        }
     }
-  }
 
-  return meanCenters;
-}
-
-function groupLocationsByCluster(locations: Location[], clusterSize: number) {
-  const groupedLocations: { [key: string]: Location[] } = {};
-
-  for (let i = 0; i < locations.length; i += clusterSize) {
-    const group = Math.floor(i / clusterSize);
-    if (!groupedLocations[group]) {
-      groupedLocations[group] = [];
-    }
-    groupedLocations[group].push(...locations.slice(i, i + clusterSize));
-  }
-
-  return groupedLocations;
+    return predictions;
 }
