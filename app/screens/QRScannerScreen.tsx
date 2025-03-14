@@ -62,7 +62,7 @@ const handleBarCodeScanned = async ({
     console.log(location)
 
     setLoading(true);
-    const response = await fetch(`http://192.168.8.167:5004/api/start_trip`, {
+    const response = await fetch(`http://192.168.8.167:5001/api/start_trip`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

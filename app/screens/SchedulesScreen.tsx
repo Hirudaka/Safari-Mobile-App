@@ -13,7 +13,7 @@ import axios from "axios";
 import TrafficCongestionPopup from "./TrafficCongestionPopup"; 
 import { getCurrentLocation, getCurrentSpeed } from "../utils/location";
 
-const API_URL = "http://10.0.2.2:5001";
+const API_URL = "http://192.168.8.167:5001";
 
 const formatTime = (decimalHours) => {
   if (decimalHours == null) return "N/A";
@@ -108,7 +108,6 @@ const DriverScheduleScreen = () => {
         congestion: congestionLevel,
         locations: [currentLocation], // Assuming you're sending one location
         speed: [currentSpeed], // Assuming you're sending one speed
-        trip_time: 15, // Assuming you're sending a trip time value (replace with actual value)
       }),
     });
 
