@@ -43,10 +43,10 @@ const HomePage = () => {
 
         >
           <View style={styles.iconContainer}>
-            <Ionicons name="map" size={32} color="#5A8200" />
+            <Ionicons name="paw" size={32} color="#5A8200" />
           </View>
-          <Text style={styles.cardTitle}>Open Map</Text>
-          <Text style={styles.cardSubtitle}>View and filter locations</Text>
+          <Text style={styles.cardTitle}>Gallery</Text>
+          <Text style={styles.cardSubtitle}>Learn about animals in Yala</Text>
         </TouchableOpacity>
 
         <TouchableOpacity 
