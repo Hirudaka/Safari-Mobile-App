@@ -29,7 +29,7 @@ const HomePage = () => {
 
           onPress={() => navigation.navigate('MapFilters')}
 
-          onPress={() => navigation.navigate('Camera')}
+     
         >
           <View style={styles.iconContainer}>
             <Ionicons name="map" size={32} color="#5A8200" />

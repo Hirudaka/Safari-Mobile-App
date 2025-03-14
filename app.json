@@ -42,7 +42,7 @@
         }
       ]
 
-      "expo-font",
+      ,
       "expo-barcode-scanner"
 
     ],

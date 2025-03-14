@@ -4,7 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import MapScreen from './screens/MapScreen';
 import MapFilters from './screens/MapFiltersScreen';
 
-import { RootStackParamList } from './types/navigation';
+//import { RootStackParamList } from './types/navigation';
 
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -45,11 +45,6 @@ const Stack = createStackNavigator<RootStackParamList>();
 
 const Index = () => {
   return (
-
-
-  
-      
-
 
     <Stack.Navigator initialRouteName="Home"
     screenOptions={{
