@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { View, Text, Alert, AppState, AppStateStatus } from "react-native";
 import axios from "axios";
