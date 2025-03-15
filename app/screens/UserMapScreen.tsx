@@ -1,8 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Text, Alert, Button, Animated } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  Animated,
+  ActivityIndicator,
+  TouchableOpacity,
+} from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { Picker } from "@react-native-picker/picker";
 import { Magnetometer } from "expo-sensors"; // To access device orientation
+import Toast from "react-native-toast-message"; // For toast messages
 
 const UserMapScreen = ({ route }) => {
   const { userLatitude, userLongitude, estimatedDistance, class_name } = route.params;
@@ -19,8 +27,7 @@ const UserMapScreen = ({ route }) => {
     latitudeDelta: 0.05,
     longitudeDelta: 0.05,
   });
-
-  const [zoom] = useState(new Animated.Value(0));
+  const [isSaveDisabled, setIsSaveDisabled] = useState(false); // Disable save after first use
 
   // Get device orientation (bearing) using Magnetometer
   useEffect(() => {
@@ -49,15 +56,6 @@ const UserMapScreen = ({ route }) => {
     }
   }, [bearing, userLatitude, userLongitude, estimatedDistance, estimatedAnimalLocation]);
 
-  // Zoom into the user's location when the screen loads
-  useEffect(() => {
-    Animated.timing(zoom, {
-      toValue: 1,
-      duration: 1000,
-      useNativeDriver: true,
-    }).start();
-  }, [userLatitude, userLongitude]);
-
   // Generate timestamp
   const timestamp = new Date().toISOString();
 
@@ -66,7 +64,7 @@ const UserMapScreen = ({ route }) => {
     setIsSaving(true);
 
     try {
-      const response = await fetch("http://192.168.8.167:8000/save_animal_data", {
+      const response = await fetch("http://172.28.6.37:8000/save_animal_data", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -79,12 +77,25 @@ const UserMapScreen = ({ route }) => {
       });
 
       if (response.ok) {
-        Alert.alert("Success", "Animal data saved successfully!");
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: "Animal data saved successfully!",
+        });
+        setIsSaveDisabled(true); // Disable save after successful submission
       } else {
-        Alert.alert("Error", "Failed to save animal data.");
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: "Failed to save animal data. Please try again.",
+        });
       }
     } catch (error) {
-      Alert.alert("Error", "An error occurred while saving the data.");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "An error occurred while saving the data. Please check your connection.",
+      });
       console.error("Error:", error);
     } finally {
       setIsSaving(false);
@@ -93,8 +104,9 @@ const UserMapScreen = ({ route }) => {
 
   if (!estimatedAnimalLocation) {
     return (
-      <View style={styles.container}>
-        <Text>Loading location...</Text>
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#007BFF" />
+        <Text style={styles.loadingText}>Calculating animal location...</Text>
       </View>
     );
   }
@@ -133,27 +145,50 @@ const UserMapScreen = ({ route }) => {
         <Text style={styles.modalText}>Select the animal you spotted:</Text>
 
         {/* Picker Dropdown */}
-        <Picker
-          selectedValue={selectedAnimal}
-          onValueChange={(itemValue) => setSelectedAnimal(itemValue)}
-          style={styles.picker}
-        >
-          <Picker.Item label="Peacock" value="Peacock" />
-          <Picker.Item label="Elephant" value="Elephant" />
-          <Picker.Item label="Deer" value="Deer" />
-          <Picker.Item label="Leopard" value="Leopard" />
-        </Picker>
+        <View style={styles.pickerContainer}>
+          <Picker
+            selectedValue={selectedAnimal}
+            onValueChange={(itemValue) => setSelectedAnimal(itemValue)}
+            style={styles.picker}
+            dropdownIconColor="#007BFF"
+          >
+            <Picker.Item label="Peacock" value="Peacock" />
+            <Picker.Item label="Elephant" value="Elephant" />
+            <Picker.Item label="Deer" value="Deer" />
+            <Picker.Item label="Leopard" value="Leopard" />
+          </Picker>
+        </View>
 
         {/* Buttons */}
         <View style={styles.modalButtons}>
-          <Button
-            title="Cancel"
-            color="red"
-            onPress={() => Alert.alert("Cancelled", "Animal data was not saved.")}
-          />
-          <Button title="OK" onPress={saveAnimalData} disabled={isSaving} />
+          <TouchableOpacity
+            style={[styles.button, styles.cancelButton]}
+            onPress={() =>
+              Toast.show({
+                type: "info",
+                text1: "Cancelled",
+                text2: "Animal data was not saved.",
+              })
+            }
+          >
+            <Text style={styles.buttonText}>Cancel</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.button, styles.saveButton, isSaveDisabled && styles.disabledButton]}
+            onPress={saveAnimalData}
+            disabled={isSaving || isSaveDisabled}
+          >
+            {isSaving ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Text style={styles.buttonText}>Save</Text>
+            )}
+          </TouchableOpacity>
         </View>
       </View>
+
+      {/* Toast Message Component */}
+      <Toast />
     </View>
   );
 };
@@ -161,6 +196,17 @@ const UserMapScreen = ({ route }) => {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   map: { ...StyleSheet.absoluteFillObject },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff",
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: "#666",
+  },
   bottomSheet: {
     position: "absolute",
     bottom: 0,
@@ -172,8 +218,10 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     alignItems: "center",
     elevation: 10,
-    borderTopWidth: 1,
-    borderTopColor: "#eee",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   modalTitle: {
     fontSize: 20,
@@ -186,6 +234,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     color: "#666",
   },
+  pickerContainer: {
+    width: "100%",
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    marginBottom: 20,
+  },
   picker: {
     width: "100%",
     height: 50,
@@ -194,7 +249,28 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
-    marginTop: 10,
+  },
+  button: {
+    flex: 1,
+    padding: 10,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    marginHorizontal: 5,
+  },
+  cancelButton: {
+    backgroundColor: "#ff4444",
+  },
+  saveButton: {
+    backgroundColor: "#007BFF",
+  },
+  disabledButton: {
+    backgroundColor: "#ccc",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
 
