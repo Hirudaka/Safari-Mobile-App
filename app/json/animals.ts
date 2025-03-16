@@ -42,6 +42,20 @@ const animals: { [key: string]: Animal[] } = {
         // Winter data
         { lat: 6.3800, lang: 81.4200, timestamp: "2024-12-15T10:00:00Z" }, // Winter day - Southwest
         { lat: 6.4900, lang: 81.4700, timestamp: "2024-12-15T22:00:00Z" }  // Winter evening - North Central
+    ],
+    "Peacock": [
+        // Spring data
+        { lat: 6.3801, lang: 81.4401, timestamp: "2024-03-15T10:01:00Z" }, // Spring day - South Central
+        { lat: 6.4701, lang: 81.5001, timestamp: "2024-03-15T22:01:00Z" }, // Spring evening - Northeast
+        // Summer data
+        { lat: 6.4801, lang: 81.4301, timestamp: "2024-06-15T10:01:00Z" }, // Summer day - North Central
+        { lat: 6.3701, lang: 81.5101, timestamp: "2024-06-15T22:01:00Z" }, // Summer evening - Southeast
+        // Fall data
+        { lat: 6.4501, lang: 81.3901, timestamp: "2024-09-15T10:01:00Z" }, // Fall day - Northwest
+        { lat: 6.3801, lang: 81.5001, timestamp: "2024-09-15T22:01:00Z" }, // Fall evening - Southeast
+        // Winter data
+        { lat: 6.3701, lang: 81.4101, timestamp: "2024-12-15T10:01:00Z" }, // Winter day - Southwest
+        { lat: 6.4801, lang: 81.4601, timestamp: "2024-12-15T22:01:00Z" }  // Winter evening - North Central
     ]
 };
 
