@@ -20,6 +20,9 @@ import GalleryScreen from './screens/GalleryScreen';
 
 import UserRegistration from './screens/UserRegistration';
 import LoginPage from './screens/LoginPage';
+import DriverLanding from './screens/DriverLanding';
+import UserLanding from './screens/UserLanding';
+import UserProfile from './screens/UserProfile';
 
 // Define the Animal type
 export interface Animal {
@@ -41,6 +44,10 @@ export type RootStackParamList = {
   AnimalDetail: { animal: Animal }; 
   UserRegistration: undefined;
   Login: undefined;
+  DriverLanding: { userId: string };
+  UserLanding: { userId: string }; // Add userId parameter
+  UserProfile: { userId: string };
+
 };
 
 
@@ -72,6 +79,9 @@ const Index = () => {
       <Stack.Screen name="MapScreen" component={MapScreen} options={{ title: 'Map' }} />
       <Stack.Screen name="UserRegistration" component={UserRegistration} />
       <Stack.Screen name="Login" component={LoginPage} />
+      <Stack.Screen name="DriverLanding" component={DriverLanding} />
+      <Stack.Screen name="UserLanding" component={UserLanding} />
+      <Stack.Screen name="UserProfile" component={UserProfile} />
     </Stack.Navigator>
   );
 };
