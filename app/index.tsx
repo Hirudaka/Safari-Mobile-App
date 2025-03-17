@@ -18,6 +18,12 @@ import HomePage from './screens/HomePage';
 import AnimalDetailScreen from './screens/AnimalDetailScreen';
 import GalleryScreen from './screens/GalleryScreen';
 
+import UserRegistration from './screens/UserRegistration';
+import LoginPage from './screens/LoginPage';
+import DriverLanding from './screens/DriverLanding';
+import UserLanding from './screens/UserLanding';
+import UserProfile from './screens/UserProfile';
+
 // Define the Animal type
 export interface Animal {
   name: string;
@@ -36,6 +42,12 @@ export type RootStackParamList = {
   UserMapScreen: undefined;  
   Gallery: undefined; 
   AnimalDetail: { animal: Animal }; 
+  UserRegistration: undefined;
+  Login: undefined;
+  DriverLanding: { userId: string };
+  UserLanding: { userId: string }; // Add userId parameter
+  UserProfile: { userId: string };
+
 };
 
 
@@ -44,7 +56,7 @@ const Stack = createStackNavigator<RootStackParamList>();
 const Index = () => {
   return (
 
-    <Stack.Navigator initialRouteName="Home"
+    <Stack.Navigator initialRouteName="Login"
     screenOptions={{
       headerStyle: {
         backgroundColor: '#5A8200',
@@ -64,7 +76,12 @@ const Index = () => {
       <Stack.Screen name="DriverScheduleScreen" component={DriverScheduleScreen}/>
       <Stack.Screen name="DriverProfileScreen" component={DriverProfileScreen}/>
       <Stack.Screen name="MapFilters" component={MapFilters} options={{ title: 'Map Filters' }}/>  
-      <Stack.Screen  name="MapScreen" component={MapScreen} options={{ title: 'Map' }} />
+      <Stack.Screen name="MapScreen" component={MapScreen} options={{ title: 'Map' }} />
+      <Stack.Screen name="UserRegistration" component={UserRegistration} />
+      <Stack.Screen name="Login" component={LoginPage} />
+      <Stack.Screen name="DriverLanding" component={DriverLanding} />
+      <Stack.Screen name="UserLanding" component={UserLanding} />
+      <Stack.Screen name="UserProfile" component={UserProfile} />
     </Stack.Navigator>
   );
 };
