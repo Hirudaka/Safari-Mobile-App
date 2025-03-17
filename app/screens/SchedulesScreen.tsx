@@ -7,17 +7,20 @@ import {
   StyleSheet,
   Alert,
   FlatList,
+  TouchableOpacity,
+  Animated,
   Button,
 } from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import axios from "axios";
-import TrafficCongestionPopup from "./TrafficCongestionPopup"; 
+import TrafficCongestionPopup from "./TrafficCongestionPopup";
 import { getCurrentLocation, getCurrentSpeed } from "../utils/location";
 
-const API_URL = "http://192.168.8.167:5001";
+const API_URL = "http://10.0.2.2:5001"; // Ensure your local server is accessible
 
+// Utility functions (unchanged)
 const formatTime = (decimalHours) => {
   if (decimalHours == null) return "N/A";
-
   const totalMinutes = Math.round(decimalHours * 60);
   const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
@@ -28,12 +31,56 @@ const formatTime = (decimalHours) => {
   return `${formattedHours}:${formattedMinutes} ${period}`;
 };
 
+const parseEntryTime = (entryTimeString) => {
+  const date = new Date(entryTimeString); // Convert string to Date object
+  if (isNaN(date.getTime())) {
+    return null; // Invalid date
+  }
+  // Extract hours and minutes in UTC (GMT) to avoid timezone conversion
+  const hours = date.getUTCHours();
+  const minutes = date.getUTCMinutes();
+  return hours + minutes / 60; // Convert to decimal hours
+};
+
+const calculateAverage = (arr) => {
+  if (!Array.isArray(arr) || arr.length === 0) return "N/A";
+  const sum = arr.reduce((acc, val) => acc + val, 0);
+  return (sum / arr.length).toFixed(2); // Round to 2 decimal places
+};
+
+const getGreeting = () => {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Good Morning 🌞";
+  if (hour < 18) return "Good Afternoon ☀️";
+  return "Good Evening 🌙";
+};
+
+const getTomorrowDate = () => {
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  return tomorrow.toDateString();
+};
+
 const DriverScheduleScreen = () => {
-  const driverId = "a3487d91-d956-42af-bd04-bf072f22981c";
+  const driverId = "67d6f1e50c6ff596244f061d";
   const [schedules, setSchedules] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [popupVisible, setPopupVisible] = useState(false); // State to manage popup visibility
+  const [popupVisible, setPopupVisible] = useState(false);
+  const [fromTime, setFromTime] = useState(null);
+  const [toTime, setToTime] = useState(null);
+  const [showFromTimePicker, setShowFromTimePicker] = useState(false);
+  const [showToTimePicker, setShowToTimePicker] = useState(false);
+  const fadeAnim = useState(new Animated.Value(0))[0];
+
+  useEffect(() => {
+    fetchSchedules();
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 800,
+      useNativeDriver: true,
+    }).start();
+  }, []);
 
   const fetchSchedules = async () => {
     setLoading(true);
@@ -44,7 +91,7 @@ const DriverScheduleScreen = () => {
       if (Array.isArray(optimized_schedule) && optimized_schedule.length > 0) {
         setSchedules(optimized_schedule);
       } else {
-        throw new Error("Invalid response format or empty data.");
+        throw new Error("No schedules available.");
       }
     } catch (error) {
       console.error("Error fetching schedules:", error);
@@ -54,18 +101,15 @@ const DriverScheduleScreen = () => {
     }
   };
 
-  useEffect(() => {
-    fetchSchedules();
-  }, []);
-
   const onRefresh = useCallback(() => {
     setRefreshing(true);
+    setFromTime(null);
+    setToTime(null);
     fetchSchedules().finally(() => setRefreshing(false));
   }, []);
 
   const handleBookSchedule = async (index) => {
     const schedule = schedules[index];
-    console.log(schedule);
     try {
       const response = await axios.post(`${API_URL}/api/book_schedule`, {
         driver_id: driverId,
@@ -78,109 +122,227 @@ const DriverScheduleScreen = () => {
             i === index ? { ...item, booked: true, driverId } : item
           )
         );
-        Alert.alert("Success", "Schedule booked successfully!");
+        Alert.alert("✅ Success", "Schedule booked successfully!");
       }
     } catch (error) {
-      console.error("Axios Error:", error.response ? error.response.data : error.message);
-      Alert.alert("Error", "Failed to book schedule. Please try again.");
+      console.error(
+        "Error:",
+        error.response ? error.response.data : error.message
+      );
+      Alert.alert("❌ Error", "Failed to book schedule. Please try again.");
     }
   };
 
-  const openTrafficPopup = () => {
-    setPopupVisible(true); // Open the popup
-  };
+  const openTrafficPopup = () => setPopupVisible(true);
+  const closeTrafficPopup = () => setPopupVisible(false);
 
-  const closeTrafficPopup = () => {
-    setPopupVisible(false); // Close the popup
-  };
+  const handleTrafficSubmit = async (congestionLevel) => {
+    const currentLocation = await getCurrentLocation();
+    const currentSpeed = await getCurrentSpeed();
+    const tripId = "67d3f0a9fe557d23758faca5";
 
- const handleTrafficSubmit = async (congestionLevel) => {
-  const currentLocation = await getCurrentLocation(); // Replace with actual method for fetching the location
-  const currentSpeed = await getCurrentSpeed(); // Replace with actual method for fetching the speed
+    try {
+      const response = await fetch(
+        `${API_URL}/api/trips/${tripId}/updateStatus`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            congestion: congestionLevel,
+            locations: [currentLocation],
+            speed: [currentSpeed],
+          }),
+        }
+      );
 
-  const tripId = "67d3f0a9fe557d23758faca5"; // Replace with the actual trip ID you're working with
+      const result = await response.json();
 
-  try {
-    const response = await fetch(`${API_URL}/api/trips/${tripId}/updateStatus`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        congestion: congestionLevel,
-        locations: [currentLocation], // Assuming you're sending one location
-        speed: [currentSpeed], // Assuming you're sending one speed
-      }),
-    });
-
-    const result = await response.json();
-
-    if (response.ok) {
-      Alert.alert("Congestion Level Updated", `Selected Level: ${congestionLevel}`);
-      closeTrafficPopup(); // Close the popup after submission
-      // Optionally update the UI or state here if necessary, e.g.:
-      // setSchedules(updatedSchedules);
-    } else {
-      Alert.alert("Error", result.error || "Failed to update trip status");
+      if (response.ok) {
+        Alert.alert(
+          "Congestion Level Updated",
+          `Selected Level: ${congestionLevel}`
+        );
+        closeTrafficPopup();
+      } else {
+        Alert.alert("Error", result.error || "Failed to update trip status");
+      }
+    } catch (error) {
+      console.error("Error updating congestion level:", error);
+      Alert.alert(
+        "Error",
+        "Failed to update congestion level. Please try again."
+      );
     }
-  } catch (error) {
-    console.error("Error updating congestion level:", error);
-    Alert.alert("Error", "Failed to update congestion level. Please try again.");
-  }
-};
+  };
 
+  const handleTimeFilterChange = (type, value) => {
+    const parsedTime = parseEntryTime(value);
+    if (type === "from") {
+      setFromTime(parsedTime);
+    } else if (type === "to") {
+      setToTime(parsedTime);
+    }
+  };
+
+  const filterSchedulesByTime = () => {
+    if (fromTime !== null && toTime !== null) {
+      return schedules.filter((schedule) => {
+        const entryTime = parseEntryTime(schedule.entry_time);
+        return entryTime >= fromTime && entryTime <= toTime;
+      });
+    }
+    return schedules;
+  };
+
+  const showTimePicker = (type) => {
+    if (type === "from") setShowFromTimePicker(true);
+    if (type === "to") setShowToTimePicker(true);
+  };
+
+  const onTimeChange = (event, selectedDate, type) => {
+    const currentDate = selectedDate || new Date();
+    if (type === "from") {
+      setFromTime(parseEntryTime(currentDate));
+      setShowFromTimePicker(false);
+    } else if (type === "to") {
+      setToTime(parseEntryTime(currentDate));
+      setShowToTimePicker(false);
+    }
+  };
 
   if (loading) {
     return (
       <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator size="large" color="#4CAF50" />
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Driver Schedule</Text>
+    <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
+      {/* Greeting Section */}
+      <Text style={styles.greeting}>{getGreeting()}</Text>
+
+      {/* Date Card */}
+      <View style={styles.dateCard}>
+        <Text style={styles.dateTextTitle}>📅 Schedule For:</Text>
+        <Text style={styles.dateText}>{getTomorrowDate()}</Text>
+      </View>
+
+      {/* Time Filter Section */}
+      <View style={styles.timeFilter}>
+        <View style={styles.timePickerContainer}>
+          <Text style={styles.timeLabel}>From:</Text>
+          <TouchableOpacity
+            style={styles.timeButton}
+            onPress={() => showTimePicker("from")}
+          >
+            <Text style={styles.timeText}>
+              {fromTime ? formatTime(fromTime) : "Select From Time"}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.timePickerContainer}>
+          <Text style={styles.timeLabel}>To:</Text>
+          <TouchableOpacity
+            style={styles.timeButton}
+            onPress={() => showTimePicker("to")}
+          >
+            <Text style={styles.timeText}>
+              {toTime ? formatTime(toTime) : "Select To Time"}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* DateTimePicker Modals */}
+      {showFromTimePicker && (
+        <DateTimePicker
+          mode="time"
+          value={new Date()}
+          onChange={(event, date) => onTimeChange(event, date, "from")}
+        />
+      )}
+      {showToTimePicker && (
+        <DateTimePicker
+          mode="time"
+          value={new Date()}
+          onChange={(event, date) => onTimeChange(event, date, "to")}
+        />
+      )}
       <Button title="Open Traffic Popup" onPress={openTrafficPopup} />
-      {schedules.length === 0 ? (
+
+      {filterSchedulesByTime().length === 0 ? (
         <Text style={styles.noScheduleText}>No Schedules Available</Text>
       ) : (
         <FlatList
-          data={schedules}
+          data={filterSchedulesByTime()}
           keyExtractor={(item, index) => item._id || `schedule-${index}`}
-          renderItem={({ item, index }) => (
-            <View style={styles.scheduleItem}>
-              <Text style={styles.scheduleTitle}>Schedule {index + 1}</Text>
-              <Text style={styles.text}>
-                Entry Time: {formatTime(item.entry_time)}
-              </Text>
-              <Text style={styles.text}>Traffic Level: {item.congestion}</Text>
-              <Text style={styles.text}>Trip Time: {item.trip_time}</Text>
-              <Button
-                title={item.booked ? "Booked" : "Book Schedule"}
-                onPress={() => handleBookSchedule(index)}
-                disabled={item.booked}
-              />
-            </View>
-          )}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
+          renderItem={({ item, index }) => (
+            <View style={styles.scheduleItem}>
+              <Text style={styles.scheduleTitle}>🛻 Schedule {index + 1}</Text>
+              <View style={styles.horizontalLine} />
+              <Text style={styles.scheduleText}>
+                <Text style={styles.boldText}>🕒 Entry Time: </Text>
+                {formatTime(parseEntryTime(item.entry_time))}
+              </Text>
+
+              <Text style={styles.scheduleText}>
+                <Text style={styles.boldText}>🚦 Avg Traffic Level: </Text>
+                {calculateAverage(item.congestion)}
+              </Text>
+
+              <Text style={styles.scheduleText}>
+                <Text style={styles.boldText}>⏳ Trip Time: </Text>
+                {item.trip_time
+                  ? `${Math.floor(item.trip_time)}h ${Math.round(
+                      (item.trip_time % 1) * 60
+                    )}m`
+                  : "N/A"}
+              </Text>
+
+              <Text style={styles.scheduleText}>
+                <Text style={styles.boldText}>🚗💨 Avg Speed: </Text>
+                {calculateAverage(item.speed)} km/h
+              </Text>
+
+              <Text style={styles.scheduleText}>
+                <Text style={styles.boldText}>⏰ Exit Time: </Text>
+                {formatTime(parseEntryTime(item.entry_time) + item.trip_time)}
+              </Text>
+
+              <TouchableOpacity
+                onPress={() => handleBookSchedule(index)}
+                style={[styles.bookButton, item.booked && styles.bookedButton]}
+              >
+                <Text style={styles.buttonText}>
+                  {item.booked ? "✅ Booked" : "📌 Book Now"}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
         />
       )}
 
       {/* Traffic Congestion Popup */}
       <TrafficCongestionPopup
         visible={popupVisible}
-        onCancel={closeTrafficPopup}
+        onCancel={() => setPopupVisible(false)}
         onSubmit={handleTrafficSubmit}
       />
-    </View>
+    </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    paddingTop: 20,
+    paddingHorizontal: 15,
     backgroundColor: "#fff",
   },
   loaderContainer: {
@@ -188,33 +350,105 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  title: {
+  greeting: {
     fontSize: 24,
     fontWeight: "bold",
+    marginVertical: 20,
+  },
+  dateCard: {
+    backgroundColor: "#f0f0f0",
+    padding: 15,
+    borderRadius: 8,
     marginBottom: 20,
-    textAlign: "center",
+  },
+  dateTextTitle: {
+    fontSize: 18,
+    color: "#000",
+    fontWeight: "bold",
+  },
+  dateText: {
+    fontSize: 16,
+    color: "#333",
+  },
+  timeFilter: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 20,
+  },
+  timePickerContainer: {
+    flex: 1,
+    marginHorizontal: 5,
+  },
+  timeLabel: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+  timeButton: {
+    padding: 10,
+    backgroundColor: "#e0e0e0",
+    borderRadius: 5,
+    alignItems: "center",
+  },
+  timeText: {
+    fontSize: 16,
+    color: "#333",
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: "bold",
+    marginVertical: 15,
   },
   noScheduleText: {
-    fontSize: 18,
     textAlign: "center",
-    marginTop: 20,
-    color: "gray",
+    fontSize: 18,
+    color: "#777",
   },
   scheduleItem: {
-    backgroundColor: "#f8f9fa",
+    marginVertical: 10,
     padding: 15,
-    marginVertical: 8,
-    borderRadius: 8,
-    elevation: 2,
+    backgroundColor: "#f9f9f9",
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.8,
+    shadowRadius: 5,
+    borderStyle: "solid",
+    borderColor: "#ddd",
+    borderWidth: 1,
   },
+
   scheduleTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 5,
   },
-  text: {
+  horizontalLine: {
+    marginVertical: 10,
+    height: 1,
+    backgroundColor: "#ccc",
+  },
+  scheduleText: {
     fontSize: 16,
-    marginBottom: 5,
+    marginVertical: 5,
+  },
+  boldText: {
+    fontWeight: "bold",
+  },
+  bookButton: {
+    padding: 10,
+    backgroundColor: "#4CAF50",
+    borderRadius: 20,
+    marginTop: 10,
+    width: "60%",
+    alignItems: "center",
+    alignSelf: "center",
+  },
+  bookedButton: {
+    backgroundColor: "#888",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
   },
 });
 
