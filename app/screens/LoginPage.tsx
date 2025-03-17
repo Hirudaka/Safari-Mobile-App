@@ -33,13 +33,16 @@ const LoginPage = () => {
 
       const data = await response.json();
 
-
       if (response.ok) {
-        // Check the user's role and navigate accordingly
-        if (data.role === 'User') {
-          navigation.navigate('Home');
-        } else if (data.role === 'driver') {
-          navigation.navigate('Home');
+        // Store the user ID and role (you can use context or state management)
+        const userId = data.user_id;
+        const role = data.role;
+
+        // Navigate based on role
+        if (role === 'User') {
+          navigation.navigate('UserLanding', { userId }); // Pass userId as a parameter
+        } else if (role === 'driver') {
+          navigation.navigate('DriverLanding', { userId }); // Pass userId as a parameter
         } else {
           Alert.alert('Error', 'Unknown role');
         }
