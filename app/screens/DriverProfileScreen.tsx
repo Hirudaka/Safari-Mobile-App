@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import axios from "axios";
 
-const API_URL = "http://10.0.2.2:5001"; // Ensure this is correct for your backend
+const API_URL = "http://192.168.8.164:5001"; // Ensure this is correct for your backend
 
 const DriverProfileScreen = ({ route }) => {
   // const { driverId } = route.params; // Get driver ID from navigation

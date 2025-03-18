@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { getCurrentLocation, getCurrentSpeed } from "../utils/location";
-const API_URL = "http://172.28.12.133:5001/";
+const API_URL = "http://192.168.8.164:5001/";
 
 export default function App() {
   const [permission, requestPermission] = useCameraPermissions();

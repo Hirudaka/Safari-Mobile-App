@@ -17,7 +17,7 @@ import axios from "axios";
 import TrafficCongestionPopup from "./TrafficCongestionPopup";
 import { getCurrentLocation, getCurrentSpeed } from "../utils/location";
 
-const API_URL = "http://192.168.8.154:5001"; // Ensure your local server is accessible
+const API_URL = "http://192.168.8.164:5001"; // Ensure your local server is accessible
 
 // Utility functions remain unchanged
 
