@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types/navigation';
 
-const API_URL = "http://10.0.2.2:5001";
+const API_URL = "http://192.168.8.164:5001";
 
 type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
 
@@ -40,8 +40,11 @@ const LoginPage = () => {
         if (role === 'User') {
           navigation.navigate('UserLanding', { userId });
         } else if (role === 'driver') {
-          navigation.navigate('DriverLanding', { userId });
-        } else {
+          navigation.navigate('DriverLanding', { userId }); // Pass userId as a parameter
+        }else if(role === 'admin'){
+          navigation.navigate('QRScannerScreen');
+        } 
+        else {
           Alert.alert('Error', 'Unknown role');
         }
       } else {
