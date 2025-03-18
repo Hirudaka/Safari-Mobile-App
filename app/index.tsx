@@ -56,7 +56,7 @@ const Stack = createStackNavigator<RootStackParamList>();
 const Index = () => {
   return (
 
-    <Stack.Navigator initialRouteName="Login"
+    <Stack.Navigator initialRouteName="Home"
     screenOptions={{
       headerStyle: {
         backgroundColor: '#5A8200',

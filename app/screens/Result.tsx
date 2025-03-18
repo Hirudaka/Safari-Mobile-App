@@ -196,15 +196,16 @@ const Result = () => {
               <Text key={index} style={styles.safetyTip}>{`${tip}`}</Text>
             ))}
           </View> 
-        </View>
-
-        <TouchableOpacity style={styles.voiceButton} onPress={toggleSpeech}>
+          <TouchableOpacity style={styles.voiceButton} onPress={toggleSpeech}>
           <FontAwesome name={isSpeaking ? "pause" : "play"} size={24} color="#fff" />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.mapButton} onPress={handleNavigateToMap}>
           <FontAwesome name="map-marker" size={28} color="#fff" />
         </TouchableOpacity>
+        </View>
+
+        
       </ScrollView>
     </View>
   );
@@ -297,7 +298,7 @@ const styles = StyleSheet.create({
   mapButton: {
     position: "relative",
     left: 20,
-    bottom: 10,
+    bottom: -10,
     backgroundColor: "#d32f2f",
     padding: 18,
     borderRadius: 50,
