@@ -1,20 +1,26 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, ActivityIndicator, StyleSheet, Alert } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  ActivityIndicator,
+  StyleSheet,
+  Alert,
+} from "react-native";
 import axios from "axios";
 
-const API_URL = "http://10.0.2.2:5001"; // Ensure this is correct for your backend
+const API_URL = "http://192.168.8.164:5001"; // Ensure this is correct for your backend
 
 const DriverProfileScreen = ({ route }) => {
-  // const { driverId } = route.params; // Get driver ID from navigation
-  const driverId ='a3487d91-d956-42af-bd04-bf072f22981c';
+  const { userId } = route.params; 
   const [driver, setDriver] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-
+  console.log(userId)
   useEffect(() => {
     const fetchDriverData = async () => {
       try {
-        const response = await axios.get(`${API_URL}/get_driver/${driverId}`);
-        setDriver(response.data);
+        const response = await axios.get(`${API_URL}/get_driver/${userId}`);
+        setDriver(response.data.driver);
       } catch (error) {
         console.error("Error fetching driver data:", error);
         Alert.alert("Error", "Failed to fetch driver details.");
@@ -24,7 +30,7 @@ const DriverProfileScreen = ({ route }) => {
     };
 
     fetchDriverData();
-  }, [driverId]);
+  }, [userId]);
 
   if (loading) {
     return <ActivityIndicator size="large" color="#0000ff" />;

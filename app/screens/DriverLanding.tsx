@@ -11,7 +11,7 @@ const DriverLanding = () => {
   const navigation = useNavigation<DriverLandingNavigationProp>();
   const route = useRoute();
   const { userId } = route.params; // Get the userId from route params
-
+  console.log(userId)
   const cards = [
     { id: '1', title: 'Profile', subtitle: 'View your Profile', icon: 'person', screen: 'DriverProfileScreen', params: { userId } },
     { id: '2', title: 'Driver Schedule', subtitle: 'View your schedule', icon: 'calendar', screen: 'DriverScheduleScreen', params: { userId } },
