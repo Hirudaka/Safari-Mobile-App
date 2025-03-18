@@ -42,6 +42,17 @@ const parseEntryTime = (entryTimeString) => {
   return hours + minutes / 60; // Convert to decimal hours
 };
 
+const parseEntryTimeTimer = (entryTimeString) => {
+  const date = new Date(entryTimeString); // Convert string to Date object
+  if (isNaN(date.getTime())) {
+    return null; // Invalid date
+  }
+  // Extract hours and minutes in local time
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  return hours + minutes / 60; // Convert to decimal hours
+};
+
 const calculateAverage = (arr) => {
   if (!Array.isArray(arr) || arr.length === 0) return "N/A";
   const sum = arr.reduce((acc, val) => acc + val, 0);
@@ -202,10 +213,10 @@ const DriverScheduleScreen = () => {
   const onTimeChange = (event, selectedDate, type) => {
     const currentDate = selectedDate || new Date();
     if (type === "from") {
-      setFromTime(parseEntryTime(currentDate));
+      setFromTime(parseEntryTimeTimer(currentDate));
       setShowFromTimePicker(false);
     } else if (type === "to") {
-      setToTime(parseEntryTime(currentDate));
+      setToTime(parseEntryTimeTimer(currentDate));
       setShowToTimePicker(false);
     }
   };
@@ -260,14 +271,34 @@ const DriverScheduleScreen = () => {
       {showFromTimePicker && (
         <DateTimePicker
           mode="time"
-          value={new Date()}
+          value={
+            fromTime
+              ? new Date(
+                  new Date().setHours(
+                    Math.floor(fromTime),
+                    Math.round((fromTime % 1) * 60),
+                    0
+                  )
+                )
+              : new Date()
+          }
           onChange={(event, date) => onTimeChange(event, date, "from")}
         />
       )}
       {showToTimePicker && (
         <DateTimePicker
           mode="time"
-          value={new Date()}
+          value={
+            toTime
+              ? new Date(
+                  new Date().setHours(
+                    Math.floor(toTime),
+                    Math.round((toTime % 1) * 60),
+                    0
+                  )
+                )
+              : new Date()
+          }
           onChange={(event, date) => onTimeChange(event, date, "to")}
         />
       )}
