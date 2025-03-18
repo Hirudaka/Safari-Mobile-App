@@ -79,7 +79,7 @@ export default function CameraScreen({ navigation }: CameraScreenProps) {
       try {
         // Call the first API to get animal height and classification
         const heightResponse = await axios.post(
-          "http://192.168.1.6:8000/get_animal_height1",
+          "http://192.168.1.6:8000/get_animal_height",
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
