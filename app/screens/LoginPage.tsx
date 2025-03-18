@@ -34,15 +34,13 @@ const LoginPage = () => {
       const data = await response.json();
 
       if (response.ok) {
-        // Store the user ID and role (you can use context or state management)
         const userId = data.user_id;
         const role = data.role;
 
-        // Navigate based on role
         if (role === 'User') {
-          navigation.navigate('UserLanding', { userId }); // Pass userId as a parameter
+          navigation.navigate('UserLanding', { userId });
         } else if (role === 'driver') {
-          navigation.navigate('DriverLanding', { userId }); // Pass userId as a parameter
+          navigation.navigate('DriverLanding', { userId });
         } else {
           Alert.alert('Error', 'Unknown role');
         }
@@ -79,6 +77,14 @@ const LoginPage = () => {
 
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Login</Text>
+        </TouchableOpacity>
+
+        {/* Register Button */}
+        <TouchableOpacity 
+          style={styles.registerButton} 
+          onPress={() => navigation.navigate('UserRegistration')}
+        >
+          <Text style={styles.registerButtonText}>Register as User</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -121,8 +127,20 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 16,
     alignItems: 'center',
+    marginBottom: 10,
   },
   buttonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  registerButton: {
+    backgroundColor: '#007AFF',
+    borderRadius: 10,
+    padding: 16,
+    alignItems: 'center',
+  },
+  registerButtonText: {
     fontSize: 18,
     fontWeight: 'bold',
     color: 'white',

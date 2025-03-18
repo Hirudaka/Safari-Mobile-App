@@ -1,15 +1,23 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, TextInput, TouchableOpacity, Text, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../types/navigation';
 
 const API_URL = "http://10.0.2.2:5001";
 
+type RegistrationScreenNavigationProp = StackNavigationProp<RootStackParamList, 'UserRegistration'>;
+
 const UserRegistration = () => {
+  const navigation = useNavigation<RegistrationScreenNavigationProp>();
   const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
+  const [NIC, setNIC] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
-  
 
   const handleRegister = async () => {
-    if (!email || !password) {
+    if (!email || !password || !name || !NIC || !phone) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
@@ -22,6 +30,9 @@ const UserRegistration = () => {
         },
         body: JSON.stringify({
           email,
+          name,
+          NIC,
+          phone,
           password,
           role: 'User'
         }),
@@ -30,7 +41,9 @@ const UserRegistration = () => {
       const data = await response.json();
 
       if (response.ok) {
-        Alert.alert('Success', 'User registered successfully!');
+        Alert.alert('Success', 'User registered successfully!', [
+          { text: 'OK', onPress: () => navigation.navigate('Login') }
+        ]);
       } else {
         Alert.alert('Error', data.error || 'Registration failed');
       }
@@ -44,7 +57,6 @@ const UserRegistration = () => {
     <View style={styles.container}>
       <View style={styles.card}>
         <Text style={styles.title}>Register</Text>
-
 
         <TextInput
           style={styles.input}
@@ -61,6 +73,28 @@ const UserRegistration = () => {
           value={password}
           onChangeText={setPassword}
           secureTextEntry
+        />
+
+        <TextInput
+          style={styles.input}
+          placeholder="Name"
+          value={name}
+          onChangeText={setName}
+        />
+
+        <TextInput
+          style={styles.input}
+          placeholder="NIC"
+          value={NIC}
+          onChangeText={setNIC}
+        />
+
+        <TextInput
+          style={styles.input}
+          placeholder="Phone Number"
+          value={phone}
+          onChangeText={setPhone}
+          keyboardType="phone-pad"
         />
 
         <TouchableOpacity style={styles.button} onPress={handleRegister}>
