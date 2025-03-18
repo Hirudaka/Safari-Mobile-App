@@ -24,6 +24,8 @@ import DriverLanding from './screens/DriverLanding';
 import UserLanding from './screens/UserLanding';
 import UserProfile from './screens/UserProfile';
 
+import WelcomeScreen from './screens/WelcomeScreen';
+
 // Define the Animal type
 export interface Animal {
   name: string;
@@ -57,7 +59,7 @@ const Stack = createStackNavigator<RootStackParamList>();
 const Index = () => {
   return (
 
-    <Stack.Navigator initialRouteName="Home"
+    <Stack.Navigator initialRouteName="WelcomeScreen"
     screenOptions={{
       headerStyle: {
         backgroundColor: '#5A8200',
@@ -67,6 +69,7 @@ const Index = () => {
         fontWeight: 'bold',
       },
     }}>
+       <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} />
       <Stack.Screen name="Home" component={HomePage} />
       <Stack.Screen name="Camera" component={CameraScreen} />
       <Stack.Screen name="Result" component={Result} />
