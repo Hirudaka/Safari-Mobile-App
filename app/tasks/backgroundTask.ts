@@ -4,7 +4,7 @@ import { getCurrentLocation, getCurrentSpeed } from "../utils/location";
 
 // Define a task name
 const BACKGROUND_FETCH_TASK = "background-fetch-task";
-const API_URL = "http://10.0.2.2:5001"; // Use your machine's IP for real devices
+const API_URL = "http://192.168.8.154:5001"; // Use your machine's IP for real devices
 
 // Define the fetchData function
 const fetchData = async () => {

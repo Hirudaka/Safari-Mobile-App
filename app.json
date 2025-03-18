@@ -16,7 +16,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "permissions": ["android.permission.WAKE_LOCK"]
+      "permissions": ["ACCESS_BACKGROUND_LOCATION", "RECEIVE_BOOT_COMPLETED"]
     },
     "web": {
       "bundler": "metro",

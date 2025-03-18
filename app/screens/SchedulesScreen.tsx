@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import {
   RefreshControl,
   View,
@@ -10,67 +10,16 @@ import {
   TouchableOpacity,
   Animated,
   Button,
+  Switch,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import axios from "axios";
 import TrafficCongestionPopup from "./TrafficCongestionPopup";
 import { getCurrentLocation, getCurrentSpeed } from "../utils/location";
 
-const API_URL = "http://10.0.2.2:5001"; // Ensure your local server is accessible
+const API_URL = "http://192.168.8.154:5001"; // Ensure your local server is accessible
 
-// Utility functions (unchanged)
-const formatTime = (decimalHours) => {
-  if (decimalHours == null) return "N/A";
-  const totalMinutes = Math.round(decimalHours * 60);
-  const hours = Math.floor(totalMinutes / 60);
-  const minutes = totalMinutes % 60;
-  const period = hours >= 12 ? "PM" : "AM";
-  const formattedHours = hours % 12 || 12;
-  const formattedMinutes = minutes.toString().padStart(2, "0");
-
-  return `${formattedHours}:${formattedMinutes} ${period}`;
-};
-
-const parseEntryTime = (entryTimeString) => {
-  const date = new Date(entryTimeString); // Convert string to Date object
-  if (isNaN(date.getTime())) {
-    return null; // Invalid date
-  }
-  // Extract hours and minutes in UTC (GMT) to avoid timezone conversion
-  const hours = date.getUTCHours();
-  const minutes = date.getUTCMinutes();
-  return hours + minutes / 60; // Convert to decimal hours
-};
-
-const parseEntryTimeTimer = (entryTimeString) => {
-  const date = new Date(entryTimeString); // Convert string to Date object
-  if (isNaN(date.getTime())) {
-    return null; // Invalid date
-  }
-  // Extract hours and minutes in local time
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
-  return hours + minutes / 60; // Convert to decimal hours
-};
-
-const calculateAverage = (arr) => {
-  if (!Array.isArray(arr) || arr.length === 0) return "N/A";
-  const sum = arr.reduce((acc, val) => acc + val, 0);
-  return (sum / arr.length).toFixed(2); // Round to 2 decimal places
-};
-
-const getGreeting = () => {
-  const hour = new Date().getHours();
-  if (hour < 12) return "Good Morning 🌞";
-  if (hour < 18) return "Good Afternoon ☀️";
-  return "Good Evening 🌙";
-};
-
-const getTomorrowDate = () => {
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  return tomorrow.toDateString();
-};
+// Utility functions remain unchanged
 
 const DriverScheduleScreen = () => {
   const driverId = "67d6f1e50c6ff596244f061d";
@@ -84,6 +33,63 @@ const DriverScheduleScreen = () => {
   const [showToTimePicker, setShowToTimePicker] = useState(false);
   const fadeAnim = useState(new Animated.Value(0))[0];
 
+  // New state for auto-updates
+  const [autoUpdateEnabled, setAutoUpdateEnabled] = useState(false);
+  const [autoUpdateCongestionLevel, setAutoUpdateCongestionLevel] = useState(1);
+  const intervalRef = useRef(null);
+
+  const formatTime = (decimalHours) => {
+    if (decimalHours == null) return "N/A";
+    const totalMinutes = Math.round(decimalHours * 60);
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    const period = hours >= 12 ? "PM" : "AM";
+    const formattedHours = hours % 12 || 12;
+    const formattedMinutes = minutes.toString().padStart(2, "0");
+
+    return `${formattedHours}:${formattedMinutes} ${period}`;
+  };
+
+  const parseEntryTime = (entryTimeString) => {
+    const date = new Date(entryTimeString); // Convert string to Date object
+    if (isNaN(date.getTime())) {
+      return null; // Invalid date
+    }
+    // Extract hours and minutes in UTC (GMT) to avoid timezone conversion
+    const hours = date.getUTCHours();
+    const minutes = date.getUTCMinutes();
+    return hours + minutes / 60; // Convert to decimal hours
+  };
+
+  const parseEntryTimeTimer = (entryTimeString) => {
+    const date = new Date(entryTimeString); // Convert string to Date object
+    if (isNaN(date.getTime())) {
+      return null; // Invalid date
+    }
+    // Extract hours and minutes in local time
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    return hours + minutes / 60; // Convert to decimal hours
+  };
+
+  const calculateAverage = (arr) => {
+    if (!Array.isArray(arr) || arr.length === 0) return "N/A";
+    const sum = arr.reduce((acc, val) => acc + val, 0);
+    return (sum / arr.length).toFixed(2); // Round to 2 decimal places
+  };
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good Morning 🌞";
+    if (hour < 18) return "Good Afternoon ☀️";
+    return "Good Evening 🌙";
+  };
+
+  const getTomorrowDate = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.toDateString();
+  };
   useEffect(() => {
     fetchSchedules();
     Animated.timing(fadeAnim, {
@@ -93,7 +99,47 @@ const DriverScheduleScreen = () => {
     }).start();
   }, []);
 
+  // New useEffect for auto-updates
+  useEffect(() => {
+    // Clear any existing interval when the component unmounts or when autoUpdateEnabled changes
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, []);
+
+  // Watch for changes to autoUpdateEnabled
+  useEffect(() => {
+    if (autoUpdateEnabled) {
+      // Start the interval timer
+      intervalRef.current = setInterval(() => {
+        handleTrafficSubmit(autoUpdateCongestionLevel);
+      }, 3000); // 3000 milliseconds = 3 seconds
+
+      // Show initial notification
+      Alert.alert(
+        "Auto Updates Enabled",
+        `Traffic updates will be sent automatically every 3 seconds with congestion level ${autoUpdateCongestionLevel}.`
+      );
+    } else {
+      // Clear the interval timer
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    }
+
+    // Cleanup when component unmounts or when autoUpdateEnabled changes
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [autoUpdateEnabled, autoUpdateCongestionLevel]);
+
   const fetchSchedules = async () => {
+    // Existing fetchSchedules code unchanged
     setLoading(true);
     try {
       const response = await axios.get(`${API_URL}/api/optimized_schedule`);
@@ -120,6 +166,7 @@ const DriverScheduleScreen = () => {
   }, []);
 
   const handleBookSchedule = async (index) => {
+    // Existing handleBookSchedule code unchanged
     const schedule = schedules[index];
     try {
       const response = await axios.post(`${API_URL}/api/book_schedule`, {
@@ -148,11 +195,30 @@ const DriverScheduleScreen = () => {
   const closeTrafficPopup = () => setPopupVisible(false);
 
   const handleTrafficSubmit = async (congestionLevel) => {
-    const currentLocation = await getCurrentLocation();
-    const currentSpeed = await getCurrentSpeed();
-    const tripId = "67d3f0a9fe557d23758faca5";
-
     try {
+      // Fetch trips for the driver
+      const tripResponse = await axios.get(
+        `${API_URL}/api/trips/driver/${driverId}`
+      );
+
+      if (tripResponse.data.length === 0) {
+        if (!autoUpdateEnabled) {
+          Alert.alert(
+            "No Active Trips",
+            "You have no active trips at the moment."
+          );
+        }
+        return;
+      }
+
+      // Extract the trip ID (assuming the first trip in the list)
+      const tripId = tripResponse.data[0]._id;
+
+      // Get current location and speed
+      const currentLocation = await getCurrentLocation();
+      const currentSpeed = await getCurrentSpeed();
+
+      // Update congestion level for the trip
       const response = await fetch(
         `${API_URL}/api/trips/${tripId}/updateStatus`,
         {
@@ -169,23 +235,47 @@ const DriverScheduleScreen = () => {
       const result = await response.json();
 
       if (response.ok) {
-        Alert.alert(
-          "Congestion Level Updated",
-          `Selected Level: ${congestionLevel}`
-        );
+        // Only show alert if not in auto-update mode
+        if (!autoUpdateEnabled) {
+          Alert.alert(
+            "Congestion Level Updated",
+            `Selected Level: ${congestionLevel}`
+          );
+        }
         closeTrafficPopup();
       } else {
-        Alert.alert("Error", result.error || "Failed to update trip status");
+        if (!autoUpdateEnabled) {
+          Alert.alert("Error", result.error || "Failed to update trip status");
+        }
       }
     } catch (error) {
       console.error("Error updating congestion level:", error);
+      if (!autoUpdateEnabled) {
+        Alert.alert(
+          "Error",
+          "Failed to update congestion level. Please try again."
+        );
+      }
+    }
+  };
+
+  // Function to toggle auto-updates
+  const toggleAutoUpdate = () => {
+    setAutoUpdateEnabled(!autoUpdateEnabled);
+  };
+
+  // Function to change congestion level for auto-updates
+  const changeCongestionLevel = (level) => {
+    setAutoUpdateCongestionLevel(level);
+    if (autoUpdateEnabled) {
       Alert.alert(
-        "Error",
-        "Failed to update congestion level. Please try again."
+        "Congestion Level Changed",
+        `Auto-updates will now use congestion level ${level}`
       );
     }
   };
 
+  // Existing functions remain unchanged
   const handleTimeFilterChange = (type, value) => {
     const parsedTime = parseEntryTime(value);
     if (type === "from") {
@@ -239,6 +329,43 @@ const DriverScheduleScreen = () => {
         <Text style={styles.dateTextTitle}>📅 Schedule For:</Text>
         <Text style={styles.dateText}>{getTomorrowDate()}</Text>
       </View>
+
+      {/* Auto Traffic Updates Section */}
+      <View style={styles.autoUpdateContainer}>
+        <View style={styles.autoUpdateHeader}>
+          <Text style={styles.autoUpdateTitle}>🚦 Auto Traffic Updates</Text>
+          <Switch
+            value={autoUpdateEnabled}
+            onValueChange={toggleAutoUpdate}
+            trackColor={{ false: "#767577", true: "#81b0ff" }}
+            thumbColor={autoUpdateEnabled ? "#4CAF50" : "#f4f3f4"}
+          />
+        </View>
+
+        {autoUpdateEnabled && (
+          <View style={styles.congestionLevelSelector}>
+            <Text style={styles.congestionLevelTitle}>Congestion Level:</Text>
+            <View style={styles.congestionButtons}>
+              {[1, 2, 3, 4, 5].map((level) => (
+                <TouchableOpacity
+                  key={level}
+                  style={[
+                    styles.congestionButton,
+                    autoUpdateCongestionLevel === level &&
+                      styles.congestionButtonActive,
+                  ]}
+                  onPress={() => changeCongestionLevel(level)}
+                >
+                  <Text style={styles.congestionButtonText}>{level}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        )}
+      </View>
+
+      {/* Manual Traffic Button */}
+      <Button title="Manual Traffic Update" onPress={openTrafficPopup} />
 
       {/* Time Filter Section */}
       <View style={styles.timeFilter}>
@@ -302,7 +429,6 @@ const DriverScheduleScreen = () => {
           onChange={(event, date) => onTimeChange(event, date, "to")}
         />
       )}
-      <Button title="Open Traffic Popup" onPress={openTrafficPopup} />
 
       {filterSchedulesByTime().length === 0 ? (
         <Text style={styles.noScheduleText}>No Schedules Available</Text>
@@ -401,10 +527,52 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#333",
   },
+  autoUpdateContainer: {
+    backgroundColor: "#f0f0f0",
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 20,
+  },
+  autoUpdateHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  autoUpdateTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  congestionLevelSelector: {
+    marginTop: 10,
+  },
+  congestionLevelTitle: {
+    fontSize: 14,
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+  congestionButtons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  congestionButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#ddd",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  congestionButtonActive: {
+    backgroundColor: "#4CAF50",
+  },
+  congestionButtonText: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
   timeFilter: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 20,
+    marginVertical: 20,
   },
   timePickerContainer: {
     flex: 1,
@@ -448,7 +616,6 @@ const styles = StyleSheet.create({
     borderColor: "#ddd",
     borderWidth: 1,
   },
-
   scheduleTitle: {
     fontSize: 18,
     fontWeight: "bold",
