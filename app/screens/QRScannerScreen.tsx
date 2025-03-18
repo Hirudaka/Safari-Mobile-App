@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { getCurrentLocation, getCurrentSpeed } from "../utils/location";
-const API_URL = "http://192.168.8.167:5004/";
+const API_URL = "http://192.168.8.164:5001/";
 
 export default function App() {
   const [permission, requestPermission] = useCameraPermissions();
@@ -17,81 +17,78 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const cameraRef = useRef<CameraView>(null);
 
-
   useEffect(() => {
     if (permission?.granted && cameraRef.current) {
       // Camera settings can be configured here if needed
     }
   }, [permission]);
 
-const handleBarCodeScanned = async ({
-  type,
-  data,
-}: {
-  type: any;
-  data: any;
-}) => {
-  setScanned(true);
+  const handleBarCodeScanned = async ({
+    type,
+    data = "",
+  }: {
+    type: any;
+    data: any;
+  }) => {
+    setScanned(true);
 
-  try {
-    // Extract driver ID from the scanned QR data
-    const prefix = "QR-";
-    if (!data.startsWith(prefix)) {
-      Alert.alert("Invalid QR Code", "QR code format is incorrect.");
-      return;
-    }
-    console.log(data)
-    const driverId = data.replace(prefix, ""); // Remove "QR-" prefix to get driver_id
-    // Fetch driver details from API using the extracted driver ID
-    console.log(driverId)
-    const driverResponse = await fetch(`http://192.168.8.167:5004/get_driver/${driverId}`);
-    const driverData = await driverResponse.json();
-    console.log("driver",driverData)
+    try {
+      // Extract driver ID from the scanned QR data
+      const prefix = "QR-";
+      if (!data.startsWith(prefix)) {
+        Alert.alert("Invalid QR Code", "QR code format is incorrect.");
+        return;
+      }
+      console.log(data);
 
-    if (!driverResponse.ok || !driverData.vehicle_id) {
-      Alert.alert("Error", "Driver not found or missing vehicle ID.");
-      return;
-    }
-
-    const vehicleId = driverData.vehicle_id;
-    const speed = await getCurrentSpeed();
-    const location = await getCurrentLocation();
-
-    console.log(vehicleId)
-    console.log(speed)
-    console.log(location)
-
-    setLoading(true);
-    const response = await fetch(`http://192.168.8.167:5001/api/start_trip`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        driver_id: driverId,
-        vehicle_id: vehicleId,
-        congestion: 0,
-        speed: [speed],
-        locations: [location],
-      }),
-    });
-
-    const result = await response.json();
-    setLoading(false);
-
-    if (response.ok) {
-      Alert.alert(
-        "Success",
-        `Trip started successfully!\nTrip ID: ${result.trip_details._id}`
+      const driverResponse = await fetch(
+        `http://192.168.8.164:5001/api/get_driver_by_qr/${data}`
       );
-    } else {
-      Alert.alert("Error", result.error || "Failed to start trip.");
-    }
-  } catch (error) {
-    setLoading(false);
-    console.error("Error scanning QR code:", error);
-    Alert.alert("Error", "Invalid QR Code or API request failed.");
-  }
-};
+      const driverData = await driverResponse.json();
 
+      if (!driverResponse.ok || !driverData.driver.vehicle_id) {
+        Alert.alert("Error", "Driver not found or missing vehicle ID.");
+        return;
+      }
+
+      const vehicleId = driverData.driver.vehicle_id;
+      const speed = await getCurrentSpeed();
+      const location = await getCurrentLocation();
+
+      console.log(vehicleId);
+      console.log(speed);
+      console.log(location);
+
+      setLoading(true);
+      const response = await fetch(`http://192.168.8.164:5001/api/start_trip`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          driver_id: driverData.driver._id,
+          vehicle_id: vehicleId,
+          congestion: 0,
+          speed: [speed],
+          locations: [location],
+        }),
+      });
+
+      const result = await response.json();
+      setLoading(false);
+
+      if (response.ok) {
+        Alert.alert(
+          "Success",
+          `Trip started successfully!\nTrip ID: ${result.trip_details._id}`
+        );
+      } else {
+        Alert.alert("Error", result.error || "Failed to start trip.");
+      }
+    } catch (error) {
+      setLoading(false);
+      console.error("Error scanning QR code:", error);
+      Alert.alert("Error", "Invalid QR Code or API request failed.");
+    }
+  };
 
   if (!permission) {
     return <View />; // Loading state

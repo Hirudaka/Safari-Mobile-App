@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, TextInput, TouchableOpacity, Text, Alert } from 'react-native';
 
-const API_URL = "http://10.0.2.2:5001";
+const API_URL = "http://192.168.8.164:5001";
 
 const UserRegistration = () => {
   const [email, setEmail] = useState('');

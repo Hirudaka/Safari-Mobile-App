@@ -11,7 +11,7 @@ const UserLanding = () => {
   const navigation = useNavigation<UserLandingNavigationProp>();
   const route = useRoute();
   const { userId } = route.params; // Get the userId from route params
-
+  
   const cards = [
     { id: '1', title: 'Profile', subtitle: 'View your Profile', icon: 'person', screen: 'UserProfile', params: { userId } },
     { id: '2', title: 'Capture Image', subtitle: 'Take photos using your camera', icon: 'camera', screen: 'Camera' },
