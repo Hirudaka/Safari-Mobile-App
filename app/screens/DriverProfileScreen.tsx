@@ -9,18 +9,17 @@ import {
 } from "react-native";
 import axios from "axios";
 
-const API_URL = "http://10.0.2.2:5001"; // Ensure this is correct for your backend
+const API_URL = "http://192.168.8.164:5001"; // Ensure this is correct for your backend
 
 const DriverProfileScreen = ({ route }) => {
-  // const { driverId } = route.params; // Get driver ID from navigation
-  const driverId = "67d6f1e50c6ff596244f061d";
+  const { userId } = route.params; 
   const [driver, setDriver] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-
+  console.log(userId)
   useEffect(() => {
     const fetchDriverData = async () => {
       try {
-        const response = await axios.get(`${API_URL}/get_driver/${driverId}`);
+        const response = await axios.get(`${API_URL}/get_driver/${userId}`);
         setDriver(response.data.driver);
       } catch (error) {
         console.error("Error fetching driver data:", error);
@@ -31,7 +30,7 @@ const DriverProfileScreen = ({ route }) => {
     };
 
     fetchDriverData();
-  }, [driverId]);
+  }, [userId]);
 
   if (loading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
