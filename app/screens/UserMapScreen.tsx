@@ -64,7 +64,7 @@ const UserMapScreen = ({ route }) => {
     setIsSaving(true);
 
     try {
-      const response = await fetch("http://172.28.6.37:8000/save_animal_data", {
+      const response = await fetch("http://192.168.1.6:8000/save_animal_data", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

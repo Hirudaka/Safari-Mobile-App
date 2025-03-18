@@ -6,12 +6,15 @@ import {
   ActivityIndicator,
   StyleSheet,
   Alert,
+  TouchableOpacity,
 } from "react-native";
 import axios from "axios";
+import { useNavigation } from "@react-navigation/native";
 
 const API_URL = "http://192.168.8.164:5001"; // Ensure this is correct for your backend
 
 const DriverProfileScreen = ({ route }) => {
+  const navigation = useNavigation();
   const { userId } = route.params; 
   const [driver, setDriver] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -31,6 +34,17 @@ const DriverProfileScreen = ({ route }) => {
 
     fetchDriverData();
   }, [userId]);
+
+  const handleLogout = () => {
+    Alert.alert(
+      "Logout Confirmation",
+      "Are you sure you want to logout?",
+      [
+        { text: "Cancel", style: "cancel" },
+        { text: "Logout", onPress: () => navigation.navigate("Login") },
+      ]
+    );
+  };
 
   if (loading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
@@ -55,6 +69,11 @@ const DriverProfileScreen = ({ route }) => {
         source={{ uri: `data:image/png;base64,${driver?.qr_code_image}` }}
         style={styles.qrImage}
       />
+
+      {/* Logout Button */}
+      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+        <Text style={styles.logoutButtonText}>Logout</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -65,6 +84,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
+    backgroundColor: "#fff",
   },
   title: {
     fontSize: 24,
@@ -79,6 +99,22 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     marginTop: 20,
+  },
+  logoutButton: {
+    marginTop: 30,
+    backgroundColor: "#007AFF",
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 8,
+    shadowColor: "#007AFF",
+    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 4,
+  },
+  logoutButtonText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#fff",
   },
 });
 

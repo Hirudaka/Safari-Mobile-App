@@ -96,7 +96,7 @@ const AnimalDetailScreen: React.FC<Props> = ({ route }) => {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} contentContainerStyle={{ flexGrow: 1 }}>
       <View style={styles.headerContainer}>
         {animalImage && <Image source={animalImage} style={styles.image} resizeMode="cover" />}
         <View style={styles.overlay} />
@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
   voiceButton: {
     position: "absolute",
     right: 20,
-    bottom: -60,
+    bottom: 2,
     backgroundColor: "#2e7d32",
     padding: 18,
     borderRadius: 50,
