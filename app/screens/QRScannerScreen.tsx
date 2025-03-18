@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { getCurrentLocation, getCurrentSpeed } from "../utils/location";
-const API_URL = "http://172.28.12.133:5001/";
+const API_URL = "http://192.168.8.164:5001/";
 
 export default function App() {
   const [permission, requestPermission] = useCameraPermissions();
@@ -42,7 +42,7 @@ export default function App() {
       console.log(data);
 
       const driverResponse = await fetch(
-        `http://172.28.12.133:5001/api/get_driver_by_qr/${data}`
+        `http://192.168.8.164:5001/api/get_driver_by_qr/${data}`
       );
       const driverData = await driverResponse.json();
 
@@ -60,7 +60,7 @@ export default function App() {
       console.log(location);
 
       setLoading(true);
-      const response = await fetch(`http://172.28.12.133:5001/api/start_trip`, {
+      const response = await fetch(`http://192.168.8.164:5001/api/start_trip`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

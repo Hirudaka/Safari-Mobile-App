@@ -47,7 +47,8 @@ export type RootStackParamList = {
   DriverLanding: { userId: string };
   UserLanding: { userId: string }; // Add userId parameter
   UserProfile: { userId: string };
-
+  DriverProfile:{userId: string};
+  DriverScheduleScreen:{userId: string}
 };
 
 

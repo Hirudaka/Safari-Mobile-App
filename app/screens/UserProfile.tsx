@@ -18,7 +18,7 @@ const UserProfile = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch(`http://10.0.2.2:5001/users/${userId}`);
+        const response = await fetch(`http://192.168.8.164:5001/users/${userId}`);
         const data = await response.json();
 
         if (response.ok) {
