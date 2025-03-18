@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, Alert, StyleSheet, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Alert,
+  StyleSheet,
+  ActivityIndicator
+} from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types/navigation';
@@ -9,7 +16,7 @@ type UserProfileNavigationProp = StackNavigationProp<RootStackParamList, 'UserPr
 const UserProfile = () => {
   const navigation = useNavigation<UserProfileNavigationProp>();
   const route = useRoute();
-  const { userId } = route.params; // Get the userId from route params
+  const { userId } = route.params as { userId: string }; // Ensure correct type
 
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(true);
@@ -37,25 +44,50 @@ const UserProfile = () => {
     fetchUserData();
   }, [userId]);
 
+  // Handle Logout
+  const handleLogOutProfile = () => {
+    Alert.alert(
+      'Logout Confirmation',
+      'Are you sure you want to logout?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Logout', onPress: () => navigation.navigate('Login') }
+      ]
+    );
+  };
+
   // Handle Remove Profile
   const handleRemoveProfile = async () => {
-    try {
-      const response = await fetch(`http://10.0.2.2:5001/users/${userId}`, {
-        method: 'DELETE',
-      });
+    Alert.alert(
+      'Delete Account',
+      'Are you sure you want to permanently delete your profile? This action cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              const response = await fetch(`http://10.0.2.2:5001/users/${userId}`, {
+                method: 'DELETE',
+              });
 
-      const data = await response.json();
+              const data = await response.json();
 
-      if (response.ok) {
-        Alert.alert('Success', 'Profile removed successfully!');
-        navigation.navigate('Login'); // Navigate back to the login screen
-      } else {
-        Alert.alert('Error', data.error || 'Failed to remove profile');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      Alert.alert('Error', 'An error occurred while removing the profile');
-    }
+              if (response.ok) {
+                Alert.alert('Success', 'Profile removed successfully!');
+                navigation.navigate('Login'); // Navigate back to the login screen
+              } else {
+                Alert.alert('Error', data.error || 'Failed to remove profile');
+              }
+            } catch (error) {
+              console.error('Error:', error);
+              Alert.alert('Error', 'An error occurred while removing the profile');
+            }
+          }
+        }
+      ]
+    );
   };
 
   if (loading) {
@@ -71,19 +103,28 @@ const UserProfile = () => {
       <Text style={styles.title}>User Profile</Text>
       <Text style={styles.email}>Email: {email}</Text>
 
-      {/* Remove Profile Button */}
-      <TouchableOpacity style={styles.removeButton} onPress={handleRemoveProfile}>
-        <Text style={styles.removeButtonText}>Remove Profile</Text>
-      </TouchableOpacity>
+      {/* Buttons Container */}
+      <View style={styles.buttonContainer}>
+        {/* Logout Button */}
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogOutProfile}>
+          <Text style={styles.logoutButtonText}>Logout</Text>
+        </TouchableOpacity>
+
+        {/* Remove Profile Button */}
+        <TouchableOpacity style={styles.deleteButton} onPress={handleRemoveProfile}>
+          <Text style={styles.deleteButtonText}>Delete Account</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
 
+// Styles for better UI/UX
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
-    padding: 16,
+    backgroundColor: '#fff',
+    padding: 20,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -93,23 +134,49 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 20,
+    color: '#2D2D2D',
+    marginBottom: 15,
   },
   email: {
     fontSize: 18,
-    color: '#666',
-    marginBottom: 20,
+    color: '#4A4A4A',
+    marginBottom: 30,
   },
-  removeButton: {
-    backgroundColor: '#FF3B30',
-    borderRadius: 10,
-    padding: 16,
+  buttonContainer: {
+    width: '100%',
     alignItems: 'center',
   },
-  removeButtonText: {
+  logoutButton: {
+    width: '80%',
+    backgroundColor: '#007AFF',
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: 'center',
+    marginBottom: 12,
+    shadowColor: '#007AFF',
+    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 4,
+  },
+  logoutButtonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  deleteButton: {
+    width: '80%',
+    backgroundColor: '#FF3B30',
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: 'center',
+    shadowColor: '#FF3B30',
+    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 4,
+  },
+  deleteButtonText: {
     fontSize: 18,
     fontWeight: 'bold',
     color: 'white',
