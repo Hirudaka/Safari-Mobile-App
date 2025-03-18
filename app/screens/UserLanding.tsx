@@ -16,6 +16,7 @@ const UserLanding = () => {
     { id: '1', title: 'Profile', subtitle: 'View your Profile', icon: 'person', screen: 'UserProfile', params: { userId } },
     { id: '2', title: 'Capture Image', subtitle: 'Take photos using your camera', icon: 'camera', screen: 'Camera' },
     { id: '3', title: 'Gallery', subtitle: 'Learn about animals in Yala', icon: 'paw', screen: 'Gallery' },
+    { id: '4', title: 'Open Map', subtitle: 'View and filter locations', icon: 'map', screen: 'MapFilters', params: { userId } },
   ];
 
   const renderItem = ({ item }: { item: any }) => (
