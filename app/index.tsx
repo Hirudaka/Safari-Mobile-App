@@ -46,6 +46,7 @@ export type RootStackParamList = {
   AnimalDetail: { animal: Animal }; 
   UserRegistration: undefined;
   Login: undefined;
+  MapFilters: undefined;
   DriverLanding: { userId: string };
   UserLanding: { userId: string }; // Add userId parameter
   UserProfile: { userId: string };
@@ -59,7 +60,7 @@ const Stack = createStackNavigator<RootStackParamList>();
 const Index = () => {
   return (
 
-    <Stack.Navigator initialRouteName="WelcomeScreen"
+    <Stack.Navigator initialRouteName="MapFilters"
     screenOptions={{
       headerStyle: {
         backgroundColor: '#5A8200',

@@ -1,7 +1,6 @@
 import { 
     Animal, 
     SeasonalPredictions, 
-    MapFilters, 
     PredictionPoint,
     Season,
     TimeOfDay,
@@ -9,7 +8,7 @@ import {
 } from '../types/map.types';
 
 export default function calculatePredictions(
-    animals: { [key: string]: Animal[] },
+    animals: Animal[], // Updated to use the backend's Animal array
     season: Season,
     timeOfDay: TimeOfDay
 ): SeasonalPredictions {
@@ -37,24 +36,33 @@ export default function calculatePredictions(
         return seasonRanges[targetSeason].includes(month);
     };
 
-    for (const animal in animals) {
-        if (!predictions[animal]) {
-            predictions[animal] = {};
+    // Group animals by class_name
+    const groupedAnimals: { [key: string]: Animal[] } = {};
+    animals.forEach(animal => {
+        if (!groupedAnimals[animal.class_name]) {
+            groupedAnimals[animal.class_name] = [];
         }
-        if (!predictions[animal][season]) {
-            predictions[animal][season] = {
+        groupedAnimals[animal.class_name].push(animal);
+    });
+
+    for (const animalType in groupedAnimals) {
+        if (!predictions[animalType]) {
+            predictions[animalType] = {};
+        }
+        if (!predictions[animalType][season]) {
+            predictions[animalType][season] = {
                 dayTime: { predictions: [] },
                 evening: { predictions: [] }
             } as SeasonData;
         }
 
-        const filteredLocations = animals[animal].filter(loc => 
+        const filteredLocations = groupedAnimals[animalType].filter(loc => 
             isInSeason(loc.timestamp, season) && isDayTime(loc.timestamp)
         );
 
         if (filteredLocations.length > 0) {
-            const meanLat = filteredLocations.reduce((sum, loc) => sum + loc.lat, 0) / filteredLocations.length;
-            const meanLng = filteredLocations.reduce((sum, loc) => sum + loc.lang, 0) / filteredLocations.length;
+            const meanLat = filteredLocations.reduce((sum, loc) => sum + loc.estimatedAnimalLocation.latitude, 0) / filteredLocations.length;
+            const meanLng = filteredLocations.reduce((sum, loc) => sum + loc.estimatedAnimalLocation.longitude, 0) / filteredLocations.length;
 
             const predictionPoints: PredictionPoint[] = [
                 {
@@ -84,8 +92,8 @@ export default function calculatePredictions(
                 }
             ];
 
-            if (predictions[animal][season]) {
-                predictions[animal][season]![timeOfDay] = {
+            if (predictions[animalType][season]) {
+                predictions[animalType][season]![timeOfDay] = {
                     predictions: predictionPoints
                 };
             }
