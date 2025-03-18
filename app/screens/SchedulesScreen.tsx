@@ -21,8 +21,8 @@ const API_URL = "http://192.168.8.164:5001"; // Ensure your local server is acce
 
 // Utility functions remain unchanged
 
-const DriverScheduleScreen = () => {
-  const driverId = "67d6f1e50c6ff596244f061d";
+const DriverScheduleScreen = ({route}) => {
+  const { userId } = route.params; 
   const [schedules, setSchedules] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -170,14 +170,14 @@ const DriverScheduleScreen = () => {
     const schedule = schedules[index];
     try {
       const response = await axios.post(`${API_URL}/api/book_schedule`, {
-        driver_id: driverId,
+        driver_id: userId,
         mainSchedule_id: schedule._id,
       });
 
       if (response.status === 200) {
         setSchedules((prevSchedules) =>
           prevSchedules.map((item, i) =>
-            i === index ? { ...item, booked: true, driverId } : item
+            i === index ? { ...item, booked: true, driverId: userId } : item
           )
         );
         Alert.alert("✅ Success", "Schedule booked successfully!");
@@ -198,7 +198,7 @@ const DriverScheduleScreen = () => {
     try {
       // Fetch trips for the driver
       const tripResponse = await axios.get(
-        `${API_URL}/api/trips/driver/${driverId}`
+        `${API_URL}/api/trips/driver/${userId}`
       );
 
       if (tripResponse.data.length === 0) {
