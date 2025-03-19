@@ -21,7 +21,7 @@ const API_URL = "http://192.168.8.154:5001"; // Ensure your local server is acce
 
 // Utility functions remain unchanged
 
-const DriverScheduleScreen = ({ route }) => {
+const DriverBookedSchedulesScreen = ({ route }) => {
   const { userId } = route.params;
   const [schedules, setSchedules] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -99,9 +99,7 @@ const DriverScheduleScreen = ({ route }) => {
     }).start();
   }, []);
 
-  // New useEffect for auto-updates
   useEffect(() => {
-    // Clear any existing interval when the component unmounts or when autoUpdateEnabled changes
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
@@ -139,14 +137,17 @@ const DriverScheduleScreen = ({ route }) => {
   }, [autoUpdateEnabled, autoUpdateCongestionLevel]);
 
   const fetchSchedules = async () => {
-    // Existing fetchSchedules code unchanged
     setLoading(true);
     try {
-      const response = await axios.get(`${API_URL}/api/optimized_schedule`);
-      const { optimized_schedule } = response.data;
+      const response = await axios.get(
+        `${API_URL}/api/schedules/driver/${userId}`
+      );
 
-      if (Array.isArray(optimized_schedule) && optimized_schedule.length > 0) {
-        setSchedules(optimized_schedule);
+      // Correctly access the schedules array
+      const { schedules } = response.data;
+
+      if (Array.isArray(schedules) && schedules.length > 0) {
+        setSchedules(schedules); // Update state with the schedules array
       } else {
         throw new Error("No schedules available.");
       }
@@ -324,49 +325,6 @@ const DriverScheduleScreen = ({ route }) => {
       {/* Greeting Section */}
       <Text style={styles.greeting}>{getGreeting()}</Text>
 
-      {/* Date Card */}
-      <View style={styles.dateCard}>
-        <Text style={styles.dateTextTitle}>📅 Schedule For:</Text>
-        <Text style={styles.dateText}>{getTomorrowDate()}</Text>
-      </View>
-
-      {/* Auto Traffic Updates Section */}
-      <View style={styles.autoUpdateContainer}>
-        <View style={styles.autoUpdateHeader}>
-          <Text style={styles.autoUpdateTitle}>🚦 Auto Traffic Updates</Text>
-          <Switch
-            value={autoUpdateEnabled}
-            onValueChange={toggleAutoUpdate}
-            trackColor={{ false: "#767577", true: "#81b0ff" }}
-            thumbColor={autoUpdateEnabled ? "#4CAF50" : "#f4f3f4"}
-          />
-        </View>
-
-        {autoUpdateEnabled && (
-          <View style={styles.congestionLevelSelector}>
-            <Text style={styles.congestionLevelTitle}>Congestion Level:</Text>
-            <View style={styles.congestionButtons}>
-              {[1, 2, 3, 4, 5].map((level) => (
-                <TouchableOpacity
-                  key={level}
-                  style={[
-                    styles.congestionButton,
-                    autoUpdateCongestionLevel === level &&
-                      styles.congestionButtonActive,
-                  ]}
-                  onPress={() => changeCongestionLevel(level)}
-                >
-                  <Text style={styles.congestionButtonText}>{level}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
-        )}
-      </View>
-
-      {/* Manual Traffic Button */}
-      <Button title="Manual Traffic Update" onPress={openTrafficPopup} />
-
       {/* Time Filter Section */}
       <View style={styles.timeFilter}>
         <View style={styles.timePickerContainer}>
@@ -484,13 +442,6 @@ const DriverScheduleScreen = ({ route }) => {
           )}
         />
       )}
-
-      {/* Traffic Congestion Popup */}
-      <TrafficCongestionPopup
-        visible={popupVisible}
-        onCancel={() => setPopupVisible(false)}
-        onSubmit={handleTrafficSubmit}
-      />
     </Animated.View>
   );
 };
@@ -650,4 +601,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DriverScheduleScreen;
+export default DriverBookedSchedulesScreen;

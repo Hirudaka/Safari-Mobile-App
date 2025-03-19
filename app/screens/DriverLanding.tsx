@@ -1,26 +1,72 @@
-import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, FlatList } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../types/navigation';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import React from "react";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  FlatList,
+} from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "../types/navigation";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
-type DriverLandingNavigationProp = StackNavigationProp<RootStackParamList, 'DriverLanding'>;
+type DriverLandingNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "DriverLanding"
+>;
 
 const DriverLanding = () => {
   const navigation = useNavigation<DriverLandingNavigationProp>();
   const route = useRoute();
   const { userId } = route.params; // Get the userId from route params
-  console.log(userId)
+  console.log(userId);
   const cards = [
-    { id: '1', title: 'Profile', subtitle: 'View your Profile', icon: 'person', screen: 'DriverProfileScreen', params: { userId } },
-    { id: '2', title: 'Driver Schedule', subtitle: 'View your schedule', icon: 'calendar', screen: 'DriverScheduleScreen', params: { userId } },
-    { id: '3', title: 'Open Map', subtitle: 'View and filter locations', icon: 'map', screen: 'MapFilters', params: { userId } },
+    {
+      id: "1",
+      title: "Profile",
+      subtitle: "View your Profile",
+      icon: "person",
+      screen: "DriverProfileScreen",
+      params: { userId },
+    },
+    {
+      id: "4",
+      title: "My Bookings",
+      subtitle: "View my bookings",
+      icon: "bookmarks",
+      screen: "DriverBookedSchedules",
+      params: { userId },
+    },
+    {
+      id: "2",
+      title: "Driver Schedule",
+      subtitle: "View your schedule",
+      icon: "calendar",
+      screen: "DriverScheduleScreen",
+      params: { userId },
+    },
+    {
+      id: "3",
+      title: "Open Map",
+      subtitle: "View and filter locations",
+      icon: "map",
+      screen: "MapFilters",
+      params: { userId },
+    },
+    {
+      id: "5",
+      title: "My Trips",
+      subtitle: "View and filter old trips",
+      icon: "git-branch",
+      screen: "DriverTrips",
+      params: { userId },
+    },
   ];
 
   const renderItem = ({ item }: { item: any }) => (
-    <TouchableOpacity 
-      style={styles.card} 
+    <TouchableOpacity
+      style={styles.card}
       onPress={() => navigation.navigate(item.screen, item.params)}
     >
       <View style={styles.iconContainer}>
@@ -47,20 +93,20 @@ const DriverLanding = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
     padding: 16,
   },
   row: {
-    justifyContent: 'space-between', // Distribute items evenly
+    justifyContent: "space-between", // Distribute items evenly
   },
   card: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 15,
     padding: 20,
     marginVertical: 10,
     flex: 1,
-    alignItems: 'center',
-    shadowColor: '#000',
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
@@ -68,22 +114,22 @@ const styles = StyleSheet.create({
     marginHorizontal: 8, // Add margin to space between cards
   },
   iconContainer: {
-    backgroundColor: '#fff8f6',
+    backgroundColor: "#fff8f6",
     padding: 16,
     borderRadius: 50,
     marginBottom: 12,
   },
   cardTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
     marginBottom: 8,
-    textAlign: 'center',
+    textAlign: "center",
   },
   cardSubtitle: {
     fontSize: 14,
-    color: '#666',
-    textAlign: 'center',
+    color: "#666",
+    textAlign: "center",
   },
 });
 
