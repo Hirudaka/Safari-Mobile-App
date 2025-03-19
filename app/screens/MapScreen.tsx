@@ -72,11 +72,17 @@ const MapScreen = () => {
     );
 
     const yalaRegionCoordinates = [
-        { latitude: 6.5150, longitude: 81.3850 },  
+        { latitude: 6.5150, longitude: 81.3850 },
+        
+        { latitude: 6.3988, longitude: 81.3558 },
         { latitude: 6.3258, longitude: 81.3832 },
+        
+        { latitude: 6.2941, longitude: 81.3646 }, 
+        { latitude: 6.2771, longitude: 81.4215 },
+
         { latitude: 6.3232,longitude: 81.4801 },
-        { latitude:6.3420, longitude:81.4950  },
-        { latitude:6.3664, longitude:81.5225  },
+        { latitude:6.3382, longitude:81.4994  },
+        { latitude:6.3608, longitude:81.5262  },
         { latitude: 6.3700, longitude: 81.5600 },  
         { latitude: 6.5100, longitude: 81.5600 },  
         { latitude: 6.5150, longitude: 81.3850 }   
