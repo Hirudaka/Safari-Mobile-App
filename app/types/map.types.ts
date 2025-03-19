@@ -31,8 +31,11 @@ export interface SeasonalMeanCenter {
 }
 
 export interface Animal {
-    lat: number;
-    lang: number;
+    estimatedAnimalLocation: {
+        latitude: number;
+        longitude: number;
+    };
+    class_name: string;
     timestamp: string; // ISO string format
 }
 

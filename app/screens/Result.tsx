@@ -101,7 +101,7 @@ const Result = () => {
       distance !== null &&
       distance > 2 &&
       distance < 10 &&
-      aggressiveData.similarity_score > 0.85 &&
+      aggressiveData.similarity_score > 0.87 &&
       ((class_name === "Leopard" && aggressiveData.predicted_class === "Known_leopard") ||
         (class_name === "Elephant" && aggressiveData.predicted_class === "Known_Elephant"))
     ) {
@@ -189,31 +189,23 @@ const Result = () => {
           <Text style={styles.leftText}>
             <Text style={styles.label}>Confidence:</Text> {classification_confidence ? classification_confidence.toFixed(2) + "%" : "N/A"}
           </Text>
-          {aggressiveData && (
-            <>
-              <Text style={styles.details}>
-                <Text style={styles.label}>Predicted Aggressive Animal:</Text> {aggressiveData.predicted_class}
-              </Text>
-              <Text style={styles.details}>
-                <Text style={styles.label}>Similarity Score:</Text> {aggressiveData.similarity_score ? aggressiveData.similarity_score.toFixed(4) : "N/A"}
-              </Text>
-            </>
-          )}
+         
           <View style={[styles.safetyTipsContainer, getSafetyColor(safetyLevel)]}>
             <Text style={styles.safetyTipsTitle}>Safety Tips:  {getSafetyIcon(safetyLevel)}</Text>
             {tips.map((tip, index) => (
               <Text key={index} style={styles.safetyTip}>{`${tip}`}</Text>
             ))}
-          </View>
-        </View>
-
-        <TouchableOpacity style={styles.voiceButton} onPress={toggleSpeech}>
+          </View> 
+          <TouchableOpacity style={styles.voiceButton} onPress={toggleSpeech}>
           <FontAwesome name={isSpeaking ? "pause" : "play"} size={24} color="#fff" />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.mapButton} onPress={handleNavigateToMap}>
           <FontAwesome name="map-marker" size={28} color="#fff" />
         </TouchableOpacity>
+        </View>
+
+        
       </ScrollView>
     </View>
   );
@@ -306,7 +298,7 @@ const styles = StyleSheet.create({
   mapButton: {
     position: "relative",
     left: 20,
-    bottom: 10,
+    bottom: -10,
     backgroundColor: "#d32f2f",
     padding: 18,
     borderRadius: 50,

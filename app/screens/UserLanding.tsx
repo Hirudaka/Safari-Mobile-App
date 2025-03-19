@@ -1,27 +1,28 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Text, FlatList } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types/navigation';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
+type UserLandingNavigationProp = StackNavigationProp<RootStackParamList, 'UserLanding'>;
 
-const HomePage = () => {
-  const navigation = useNavigation<HomeScreenNavigationProp>();
-
+const UserLanding = () => {
+  const navigation = useNavigation<UserLandingNavigationProp>();
+  const route = useRoute();
+  const { userId } = route.params; // Get the userId from route params
+  
   const cards = [
-    { id: '1', title: 'Capture Image', subtitle: 'Take photos using your camera', icon: 'camera', screen: 'Camera' },
-    { id: '2', title: 'Open Map', subtitle: 'View and filter locations', icon: 'map', screen: 'MapFilters' },
+    { id: '1', title: 'Profile', subtitle: 'View your Profile', icon: 'person', screen: 'UserProfile', params: { userId } },
+    { id: '2', title: 'Capture Image', subtitle: 'Take photos using your camera', icon: 'camera', screen: 'Camera' },
     { id: '3', title: 'Gallery', subtitle: 'Learn about animals in Yala', icon: 'paw', screen: 'Gallery' },
-    { id: '4', title: 'QR Scanner', subtitle: 'Scan QR codes', icon: 'qr-code', screen: 'QRScannerScreen' },
-    { id: '5', title: 'Driver Schedule', subtitle: 'View your schedule', icon: 'calendar', screen: 'DriverScheduleScreen' },
+    { id: '4', title: 'Open Map', subtitle: 'View and filter locations', icon: 'map', screen: 'MapFilters', params: { userId } },
   ];
 
   const renderItem = ({ item }: { item: any }) => (
     <TouchableOpacity 
       style={styles.card} 
-      onPress={() => navigation.navigate(item.screen)}
+      onPress={() => navigation.navigate(item.screen, item.params)}
     >
       <View style={styles.iconContainer}>
         <Ionicons name={item.icon} size={32} color="#5A8200" />
@@ -87,4 +88,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomePage;
+export default UserLanding;
