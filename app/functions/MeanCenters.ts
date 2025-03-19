@@ -19,7 +19,7 @@ export default function calculatePredictions(
         const hour = date.getUTCHours();
         // Debug timestamp parsing
         console.log(`Parsing timestamp: ${timestamp}, Hour: ${hour}, TimeOfDay: ${timeOfDay}`);
-        return timeOfDay === 'dayTime' ? (hour >= 6 && hour < 18) : (hour < 6 || hour >= 18);
+        return timeOfDay === 'dayTime' ? (hour >= 6 && hour < 11) : (hour < 6 || hour >= 11);
     };
 
     const isInSeason = (timestamp: string, targetSeason: Season): boolean => {
