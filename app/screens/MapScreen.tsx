@@ -1,10 +1,9 @@
-import * as React from 'react';
-import { useState, useEffect, useRef, memo, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef, memo, useCallback, useMemo } from 'react';
 import { View, StyleSheet, Dimensions, Image, Alert, TouchableOpacity, Text, Linking, ActivityIndicator } from 'react-native';
 import MapView, { Polygon, Marker } from 'react-native-maps';
-import animals from '../json/animals';
 import calculateMeanCenter from '../functions/MeanCenters';
 import { 
+    Animal,
     Region, 
     YalaRegionBounds, 
     CustomMarkerProps,
@@ -18,25 +17,72 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 import { RootStackParamList } from '../types/navigation';
 import MapViewDirections from 'react-native-maps-directions';
 import * as Location from 'expo-location';
+import axios from 'axios';
 
 type MapScreenRouteProp = RouteProp<RootStackParamList, 'MapScreen'>;
+
+const api = axios.create({
+    baseURL: "http://192.168.8.173:8000",
+});
+
+const getAnimalData = async () => {
+    try {
+        const response = await api.get("/get_animal_data");
+        return response.data;
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            throw new Error(error.response?.data?.message || error.message);
+        } else if (error instanceof Error) {
+            throw new Error(error.message);
+        } else {
+            throw new Error("An unknown error occurred");
+        }
+    }
+};
 
 const MapScreen = () => {
     const route = useRoute<MapScreenRouteProp>();
     const { season, timeOfDay, animal } = route.params.filters;
     
+    const [animals, setAnimals] = useState<Animal[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchAnimalData = async () => {
+            try {
+                const data = await getAnimalData();
+                setAnimals(data);
+            } catch (error) {
+                console.error('Error fetching animal data:', error);
+                Alert.alert('Error', 'Failed to fetch animal data');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchAnimalData();
+    }, []);
+    
+
+
     // Memoize predictions to prevent recalculation
     const predictions = useMemo(() => 
         calculateMeanCenter(animals, season, timeOfDay),
-        [season, timeOfDay]
+        [season, timeOfDay,animals,animal]
     );
 
     const yalaRegionCoordinates = [
-        { latitude: 6.5150, longitude: 81.3850 },  
+        { latitude: 6.5150, longitude: 81.3850 },
+        
+        { latitude: 6.3988, longitude: 81.3558 },
         { latitude: 6.3258, longitude: 81.3832 },
+        
+        { latitude: 6.2941, longitude: 81.3646 }, 
+        { latitude: 6.2771, longitude: 81.4215 },
+
         { latitude: 6.3232,longitude: 81.4801 },
-        { latitude:6.3420, longitude:81.4950  },
-        { latitude:6.3664, longitude:81.5225  },
+        { latitude:6.3382, longitude:81.4994  },
+        { latitude:6.3608, longitude:81.5262  },
         { latitude: 6.3700, longitude: 81.5600 },  
         { latitude: 6.5100, longitude: 81.5600 },  
         { latitude: 6.5150, longitude: 81.3850 }   
@@ -153,7 +199,7 @@ const MapScreen = () => {
         }
 
         return null;
-    }, [season, timeOfDay]); // Only recreate when filters change
+    }, [season, timeOfDay,animals,animal]); // Only recreate when filters change
 
     // Memoize generateSearchPoints
     const generateSearchPoints = useCallback((
@@ -223,7 +269,7 @@ const MapScreen = () => {
         return () => {
             isMounted = false;
         };
-    }, []); // Empty dependency array as we only want this to run once
+    }, []); 
 
     const getDistanceFromLatLonInKm = (lat1: number, lon1: number, lat2: number, lon2: number) => {
         const R = 6371; // Radius of the earth in km
